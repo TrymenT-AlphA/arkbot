@@ -41,7 +41,7 @@ baidu-ocr:
 
 > nb run
 
-首次运行需进入gocqhttp网页添加账户信息
+首次运行需进入gocqhttp网页添加账户信息(http://127.0.0.1:port/go-cqhttp/)
 
 # 更新日志
 

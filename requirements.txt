@@ -1,0 +1,4 @@
+aiohttp==3.7.4.post0
+baidu_aip==4.16.3
+nonebot==1.9.1
+PyYAML==6.0

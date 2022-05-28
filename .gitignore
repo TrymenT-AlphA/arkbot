@@ -1,0 +1,8 @@
+/.vscode/
+/accounts/
+__pycache__/
+/test/
+.env
+.env.dev
+global.yml
+ocr.yml

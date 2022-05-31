@@ -23,4 +23,5 @@ async def rebootHandler(matcher: Matcher):
     await matcher.send('重启中...')
     sys.stdout.flush()
     program = sys.executable
-    os.execl(program, sys.argv[0], *sys.argv)
+    os.execl(program, program, *sys.argv)
+    # sys.exit()

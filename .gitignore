@@ -2,8 +2,3 @@
 /accounts/
 __pycache__/
 /test/
-.env
-.env.dev
-.env.prod
-/config/*.yml
-!recruit.yml

@@ -1,10 +1,11 @@
+# encoding:utf-8
 import os
 import sys
 
 from nonebot import on_command
 from nonebot.rule import to_me
-from nonebot.matcher import Matcher
 from nonebot.permission import SUPERUSER
+from nonebot.matcher import Matcher
 
 
 reboot = on_command(
@@ -18,10 +19,9 @@ reboot = on_command(
 @reboot.handle()
 async def rebootHandler(matcher: Matcher) -> None:
     """
-    机器人重启
+    重启
     """
     await matcher.send('重启中...')
     sys.stdout.flush()
     program = sys.executable
     os.execl(program, program, *sys.argv)
-

@@ -1,5 +1,4 @@
 # encoding:utf-8
-
 import yaml
 from functools import cmp_to_key
 from itertools import combinations
@@ -22,37 +21,37 @@ class Recruit:
         self.normal_ops = info['普通干员']
         self.special_ops = info['高级资深干员']
         self.words_white_list = [
-            '辅助干员', '狙击干员', '术师干员', '重装干员', '近卫干员', '特种干员', '先锋干员', '医疗干员', 
-            '资深干员', '高级资深干员', '群攻', '生存', '位移', '爆发', '输出', '治疗', '削弱', '减速', '新手', 
-            '召唤', '防护', '支援', '控场', '近战位', '远程位', '快速复活', '费用回复', '支援机械',
+            '辅助干员', '狙击干员', '术师干员', '重装干员', '近卫干员', '特种干员', '先锋干员', '医疗干员',
+            '资深干员', '高级资深干员', '群攻', '生存', '位移', '爆发', '输出', '治疗', '削弱', '减速',
+            '新手', '召唤', '防护', '支援', '控场', '近战位', '远程位', '快速复活', '费用回复', '支援机械',
         ]
-    
-    async def get_ocr_file(self, file):
+
+    async def get_ocr_file(self, file: str) -> dict:
         """
         通过文件请求api识别
         """
-        with open(file, 'rb') as f:
+        with open(file, 'rb', encoding='utf8') as f:
             image = f.read()
         return await self.ocr.get_general_basic_ocr(image)
 
-    async def get_ocr_url(self, url):
+    async def get_ocr_url(self, url: str) -> dict:
         """
         通过url请求api识别
         """
         image = await download_async(url)
         return await self.ocr.get_general_basic_ocr(image)
-    
-    async def get_tags(self, src):
+
+    async def get_tags(self, src: str, src_t: str) -> list:
         """
         获取识别结果中的tag
-        如果以'file:///'开头，调用文件识别
-        否则调用url识别
         """
-        if 'file:///' in src:
-            info = await self.get_ocr_file(src[8:])
-        else:
+        if src_t == 'file':
+            info = await self.get_ocr_file(src)
+        elif src_t == 'url':
             info = await self.get_ocr_url(src)
-        
+        else:
+            return []
+
         words_result = info['words_result']
         tags = []
         for each in words_result:
@@ -62,14 +61,14 @@ class Recruit:
             if words in self.words_white_list:
                 tags.append(words)
         return tags
-    
-    async def get_advice(self, src):
+
+    async def get_advice(self, src: str, src_t: str) -> str:
         """
         获取公开招募建议
         """
-        tags: list = await self.get_tags(src)
-        if '高级资深干员' in tags:
+        tags = await self.get_tags(src, src_t)
 
+        if '高级资深干员' in tags:
             if '资深干员' in tags:
                 tags.remove('资深干员')
             tags.remove('高级资深干员')
@@ -88,20 +87,21 @@ class Recruit:
                         hit.append(op_name)
                 if len(hit) > 0:
                     results.append((selection, hit))
-            results.sort(key=cmp_to_key(lambda x, y: len(x[1]) - len(y[1])))
 
-            string = ''
+            def cmp1(x, y):
+                return len(x[1]) - len(y[1])
+            results.sort(key=cmp_to_key(cmp1))
+
+            advice = ''
             for result in results:
-                string += '[高级资深干员]'
+                advice += '[高级资深干员]'
                 for tag in result[0]:
-                    string += f"[{tag}]"
-                string += ':\n'
+                    advice += f"[{tag}]"
+                advice += ':\n'
                 for op_name in result[1]:
-                    string += f"[{'★'*6}] {op_name}\n"
-            return string
-
+                    advice += f"[{'★'*6}] {op_name}\n"
+            return advice
         else:
-
             selections = []
             for i in range(1, 4):
                 for each in combinations(tags, i):
@@ -122,15 +122,21 @@ class Recruit:
                             hit.append(op_name)
                 if len(hit) > 0:
                     results.append((selection, hit, min_level))
-            results.sort(key=cmp_to_key(lambda x, y: y[2]-x[2] if x[2]!=y[2] else len(x[1])-len(y[1])))
 
-            string = ''
+            def cmp2(x, y):
+                if x[2] != y[2]:
+                    return y[2]-x[2]
+                else:
+                    return len(x[1])-len(y[1])
+            results.sort(key=cmp_to_key(cmp2))
+
+            advice = ''
             for result in results:
                 for tag in result[0]:
-                    string += f"[{tag}]"
-                string += ':\n'
+                    advice += f"[{tag}]"
+                advice += ':\n'
                 result[1].sort(key=lambda x: self.normal_ops[x]['level'])
                 for op_name in result[1]:
                     level = self.normal_ops[op_name]['level']
-                    string += f"[{'★'*level+'☆'*(6-level)}] {op_name}\n"
-            return string
+                    advice += f"[{'★'*level+'☆'*(6-level)}] {op_name}\n"
+            return advice

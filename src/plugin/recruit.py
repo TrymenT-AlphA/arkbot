@@ -16,7 +16,7 @@ recruit = on_command(
 
 
 @recruit.handle()
-async def recruitHandler(matcher: Matcher, args: Message = CommandArg()):
+async def recruitHandler(matcher: Matcher, args: Message = CommandArg()) -> None:
     """
     第一次触发时，如果携带参数，则直接赋值
     """
@@ -24,7 +24,7 @@ async def recruitHandler(matcher: Matcher, args: Message = CommandArg()):
         matcher.set_arg('recruit_args', args)
 
 @recruit.got('recruit_args', prompt='请博士发送公招截图')
-async def recruitGot(state: T_State):
+async def recruitGot(state: T_State) -> None:
     """
     第二次触发，进行公招处理
     """

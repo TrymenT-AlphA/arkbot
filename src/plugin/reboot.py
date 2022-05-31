@@ -16,7 +16,7 @@ reboot = on_command(
 
 
 @reboot.handle()
-async def rebootHandler(matcher: Matcher):
+async def rebootHandler(matcher: Matcher) -> None:
     """
     机器人重启
     """
@@ -24,4 +24,3 @@ async def rebootHandler(matcher: Matcher):
     sys.stdout.flush()
     program = sys.executable
     os.execl(program, program, *sys.argv)
-    # sys.exit()

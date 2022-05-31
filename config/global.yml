@@ -1,5 +1,5 @@
 database:
-  host:
+  host: 123456789
   user:
   password:
   database:

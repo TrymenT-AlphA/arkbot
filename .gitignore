@@ -4,5 +4,6 @@ __pycache__/
 /test/
 .env
 .env.dev
-global.yml
-ocr.yml
+.env.prod
+/config/*.yml
+!recruit.yml

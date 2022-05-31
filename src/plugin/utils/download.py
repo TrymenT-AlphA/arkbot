@@ -1,22 +1,23 @@
 # encoding:utf-8
-
 import aiohttp
+from fake_useragent import UserAgent
 
 
 default_headers = {
-    'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 10_3_1 like Mac OS X) '
-                  'AppleWebKit/603.1.30 (KHTML, like Gecko) Version/10.0 Mobile/14E304 Safari/602.1'
+    'User-Agent': UserAgent().chrome
 }
 
 
-async def download_async(url, headers=None, stringify=False):
+async def download_async(url,
+                         headers: dict = None,
+                         stringify: bool = False) -> None:
     """
     异步下载
     """
-    async with aiohttp.ClientSession() as session:
-        async with session.get(url, headers=headers or default_headers) as response:
-            if response.status == 200:
+    async with aiohttp.ClientSession() as sess:
+        async with sess.get(url, headers=headers or default_headers) as resp:
+            if resp.status == 200:
                 if stringify:
-                    return await response.text()
+                    return await resp.text()
                 else:
-                    return await response.read()
+                    return await resp.read()

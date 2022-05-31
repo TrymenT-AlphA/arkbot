@@ -3,9 +3,11 @@
 ## 克隆仓库
 
 > git clone https://github.com/TrymenT-AlphA/arknightsbot.git
+
 ## 安装依赖
 
 > pip install -r requirements.txt
+
 ## 配置
 
 .env
@@ -31,6 +33,7 @@ COMMAND_SEP=[命令参数分割符]
 # APSCHEDULER_CONFIG={"apscheduler.timezone": "Asia/Shanghai"}
 
 ```
+
 数据库
 ```
 database:
@@ -60,8 +63,13 @@ baidu-ocr:
 # 更新日志
 
 ## 2022/5/31
+
+[+] 更新日志输出
+
 [+] 实现b站动态推送
+
 [+] 实现机器人重启功能
 
 ## 2022/5/28
+
 [+] 实现公开招募功能

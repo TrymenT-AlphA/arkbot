@@ -31,3 +31,4 @@ async def bilibiliDynamicScheduledJob() -> None:
             info['accounts'][i]['recent_dynamic_id'] = latest_dynamic_id
             with open('config/bilibilidynamic.yml', 'w') as f:
                 yaml.dump(info, f)
+

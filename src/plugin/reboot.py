@@ -24,3 +24,4 @@ async def rebootHandler(matcher: Matcher) -> None:
     sys.stdout.flush()
     program = sys.executable
     os.execl(program, program, *sys.argv)
+

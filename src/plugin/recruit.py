@@ -57,3 +57,4 @@ async def recruitGot(state: T_State) -> None:
             else:
                 message += Message(f'图{i+1}公招：\n' + '都是垃圾tag呢')
         await recruit.finish(message)
+

@@ -8,46 +8,52 @@ from nonebot.adapters.onebot.v11 import Message
 from .core.Recruit import Recruit
 
 
-recruit = on_command("recruit", rule=to_me(), aliases={"公开招募"}, priority=0)
+recruit = on_command(
+    cmd='recruit', 
+    rule=to_me(), 
+    aliases={"公开招募"}, 
+    priority=0)
 
 
 @recruit.handle()
-async def recruitHandle(matcher: Matcher, args: Message = CommandArg()):
+async def recruitHandler(matcher: Matcher, args: Message = CommandArg()):
+    """
+    第一次触发时，如果携带参数，则直接赋值
+    """
     if len(args) > 0:
         matcher.set_arg('recruit_args', args)
 
-
 @recruit.got('recruit_args', prompt='请博士发送公招截图')
 async def recruitGot(state: T_State):
+    """
+    第二次触发，进行公招处理
+    """
     recruit_args = state['recruit_args']
 
     if len(recruit_args) == 0:
         await recruit.reject('请博士发送公招截图')
 
     recruit_cnt = 0
-    advices = []
+    advice = []
+    # 获取所有图片的公招结果
     for arg in recruit_args:
         if arg.type == 'image':
             recruit_cnt += 1
-            advice = await Recruit().select_tags(arg.data['url'])
-            advices.append(advice)
+            advice.append(await Recruit().get_advice(arg.data['url']))
 
-    if len(advices) == 1:
-        if len(advices[0]) > 0:
-            await recruit.finish(advices[0][0:-1])
+    # 生成消息
+    if len(advice) == 1:
+        if len(advice[0]) > 0:
+            await recruit.finish(advice[0][0:-1])
         else:
             await recruit.finish('都是垃圾tag呢')
     else:
         message = Message('')
-        for i in range(len(advices)):
+        for i in range(len(advice)):
             if i != 0:
                 message += Message('\n')
-            if len(advices[i]) > 0:
-                message += Message(f'图{i+1}公招：\n' + advices[i][0:-1])
+            if len(advice[i]) > 0:
+                message += Message(f'图{i+1}公招：\n' + advice[i][0:-1])
             else:
                 message += Message(f'图{i+1}公招：\n' + '都是垃圾tag呢')
         await recruit.finish(message)
-
-
-
-

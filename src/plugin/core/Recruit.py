@@ -45,6 +45,8 @@ class Recruit:
     async def get_tags(self, src):
         """
         获取识别结果中的tag
+        如果以'file:///'开头，调用文件识别
+        否则调用url识别
         """
         if 'file:///' in src:
             info = await self.get_ocr_file(src[8:])
@@ -61,7 +63,10 @@ class Recruit:
                 tags.append(words)
         return tags
     
-    async def select_tags(self, src):
+    async def get_advice(self, src):
+        """
+        获取公开招募建议
+        """
         tags: list = await self.get_tags(src)
         if '高级资深干员' in tags:
 

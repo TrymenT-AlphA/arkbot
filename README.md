@@ -3,21 +3,33 @@
 ## 克隆仓库
 
 > git clone https://github.com/TrymenT-AlphA/arknightsbot.git
-
 ## 安装依赖
 
 > pip install -r requirements.txt
-
 ## 配置
 
 .env
 ```
-ENVIRONMENT=dev
+ENVIRONMENT=dev # 或者 ENVIRONMENT=prod
 ```
-.env.dev
+.env.dev 示例
 ```
 HOST=127.0.0.1
 PORT= # 端口
+
+FASTAPI_RELOAD=true
+
+LOG_LEVEL=DEBUG
+
+SUPERUSERS=[你的超管账号]
+NICKNAME=[你的机器人昵称]
+COMMAND_START=[命令开始标识符]
+COMMAND_SEP=[命令参数分割符]
+
+# 如果用到定时任务需添加以下参数
+# APSCHEDULER_AUTOSTART=true
+# APSCHEDULER_CONFIG={"apscheduler.timezone": "Asia/Shanghai"}
+
 ```
 数据库
 ```
@@ -41,9 +53,14 @@ baidu-ocr:
 
 > nb run
 
+> python bot.py
+
 首次运行需进入gocqhttp网页添加账户信息(http://127.0.0.1:port/go-cqhttp/)
 
 # 更新日志
 
+## 2022/5/31
+[+] 实现机器人重启功能
+
 ## 2022/5/28
-+ 实现公开招募功能
+[+] 实现公开招募功能

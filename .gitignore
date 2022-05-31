@@ -2,3 +2,4 @@
 /accounts/
 __pycache__/
 /test/
+.gitattributes

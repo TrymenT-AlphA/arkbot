@@ -29,7 +29,7 @@ class BaiduOCR:
             func = self.client.basicGeneralUrl
         else:
             func = self.client.basicGeneral
-
+        # 额外参数，详见baidu-api
         options = {}
         loop = asyncio.get_event_loop()
         return await loop.run_in_executor(None, func, image, options)
@@ -43,7 +43,7 @@ class BaiduOCR:
             func = self.client.basicAccurateUrl
         else:
             func = self.client.basicAccurate
-
+        # 额外参数，详见baidu-api
         options = {}
         loop = asyncio.get_event_loop()
         return await loop.run_in_executor(None, func, image, options)

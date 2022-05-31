@@ -20,6 +20,7 @@ async def changelogHandler(matcher: Matcher) -> None:
     message = f"github:{repository}"
     with open('README.md', 'r', encoding='utf8') as f:
         for line in reversed(f.readlines()):
+            # 空行跳过
             if len(line.strip()) == 0:
                 continue
 

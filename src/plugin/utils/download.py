@@ -8,7 +8,7 @@ default_headers = {
 }
 
 
-async def download_async(url,
+async def download_async(url: str,
                          headers: dict = None,
                          stringify: bool = False) -> None:
     """

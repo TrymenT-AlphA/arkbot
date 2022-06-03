@@ -1,0 +1,11 @@
+[tool.poetry]
+name = "arknightsbot"
+version = "0.1.0"
+description = "明日方舟主题机器人"
+authors = ["ChongKai <1302393176@qq.com>"]
+license = "GPL-3.0 license"
+readme = "README.md"
+
+[tool.nonebot]
+plugins = ["nonebot_plugin_apscheduler", "nonebot_plugin_gocqhttp"]
+plugin_dirs = ["src"]

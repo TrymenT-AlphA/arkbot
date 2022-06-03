@@ -35,7 +35,7 @@ class BaiduOCR:
         return await loop.run_in_executor(None, func, image, options)
 
     async def get_basic_accurate_ocr(self,
-                                     image: Union[str, ByteString]) -> dict:
+                                     image: Union[str, bytes]) -> dict:
         """
         通用文字识别（高精度版）
         """

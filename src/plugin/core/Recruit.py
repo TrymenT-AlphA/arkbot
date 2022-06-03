@@ -4,7 +4,7 @@ from functools import cmp_to_key
 from itertools import combinations
 
 from .BaiduOCR import BaiduOCR
-from ..utils.download import download_async
+from ..utils import download_async
 
 
 class Recruit:

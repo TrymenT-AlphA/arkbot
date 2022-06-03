@@ -1,5 +1,5 @@
 accounts:
-- recent_dynamic_id:
-  uid:
+- recent_did: 
+  uid: 
 enabledgroups:
--
+- 

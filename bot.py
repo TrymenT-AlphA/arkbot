@@ -25,8 +25,8 @@ async def onBotConnect():
     )
 
 
-@driver.on_bot_connect
-async def onBotConnect():
+@driver.on_bot_disconnect
+async def onBotDisconnect():
     bot = nonebot.get_bot()
     try:
         await bot.call_api(

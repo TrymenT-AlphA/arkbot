@@ -66,9 +66,11 @@ class Recruit:
         tags = []
         words_result = info['words_result']
         for each in words_result:
-            words = each['words']
+            words = each['words'].strip().replace(' ', '')
             if '高级资' in words:
                 words = '高级资深干员'
+            elif '资深' in words:
+                words = '资深干员'
             if words in self.words_white_list:
                 tags.append(words)
         return tags

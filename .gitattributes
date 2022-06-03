@@ -1,7 +1,4 @@
-/config/bilibilidynamic.yml merge=ours
-/config/database.yml merge=ours
-/config/ocr.yml merge=ours
-/config/welcome.yml merge=ours
+config/merge=ours
 .env merge=ours
 .env.dev merge=ours
 .env.prod merge=ours

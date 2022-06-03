@@ -1,4 +1,5 @@
 # encoding:utf-8
+
 [project]
 name = "arknightsbot"
 version = "0.1.0"
@@ -25,6 +26,7 @@ bilibili-api = "*"
 baidu-api = "*"
 baidu-aip = "*"
 fake-useragent = "*"
+pillow = "*"
 
 [dev-packages]
 

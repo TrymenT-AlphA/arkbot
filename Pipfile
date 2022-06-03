@@ -2,7 +2,7 @@
 [project]
 name = "arknightsbot"
 version = "0.1.0"
-description = "Ã÷ÈÕ·½ÖÛÖ÷Ìâ»úÆ÷ÈË"
+description = "æ˜æ—¥æ–¹èˆŸä¸»é¢˜æœºå™¨äºº"
 authors = ["ChongKai <1302393176@qq.com>"]
 license = "GPL-3.0 license"
 readme = "README.md"

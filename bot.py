@@ -12,7 +12,7 @@ driver.register_adapter(ONEBOT_V11ADAPTER)
 
 # Load plugins
 nonebot.load_builtin_plugins("echo")
-nonebot.load_from_toml("pyproject.toml")
+nonebot.load_from_toml("Pipfile")
 
 
 @driver.on_bot_connect

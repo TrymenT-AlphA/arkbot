@@ -4,9 +4,9 @@
 
 > git clone https://github.com/TrymenT-AlphA/arknightsbot.git
 
-## 安装依赖
+## 创建虚拟环境
 
-> pip install -r requirements.txt
+> pipenv install
 
 ## 配置
 
@@ -34,6 +34,15 @@ COMMAND_SEP=[命令参数分割符]
 
 ```
 
+b站动态推送
+```
+accounts:
+- recent_did:
+  uid: # 订阅账号的uid
+enabledgroups:
+- # 启用功能的群聊
+```
+
 数据库
 ```
 database:
@@ -52,11 +61,15 @@ baidu-ocr:
   SECRET_KEY: # secret_key
 ```
 
+入群提醒
+```
+enabledgroups:
+- # 启用功能的群聊
+```
+
 ## 运行
 
-> nb run
-
-> python bot.py
+> pipenv python bot.py
 
 首次运行需进入gocqhttp网页添加账户信息(http://127.0.0.1:port/go-cqhttp/)
 

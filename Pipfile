@@ -27,6 +27,7 @@ baidu-api = "*"
 baidu-aip = "*"
 fake-useragent = "*"
 pillow = "*"
+moviepy = "*"
 
 [dev-packages]
 

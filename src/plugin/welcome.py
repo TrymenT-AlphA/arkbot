@@ -2,7 +2,6 @@
 from nonebot import on_notice
 from nonebot.matcher import Matcher
 from nonebot.adapters.onebot.v11 import MessageSegment, GroupIncreaseNoticeEvent
-
 import yaml
 
 welcom = on_notice()

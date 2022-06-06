@@ -27,15 +27,7 @@ async def onBotConnect():
 
 @driver.on_bot_disconnect
 async def onBotDisconnect():
-    try:
-        bot = nonebot.get_bot()
-        await bot.call_api(
-            'send_group_msg',
-            group_id = '645350897',
-            message = '失联中...'
-        )
-    except:
-        print('失联中...')
+    print('失联中...')
 
 
 if __name__ == "__main__":

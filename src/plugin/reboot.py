@@ -5,7 +5,6 @@ import sys
 from nonebot import on_command, get_bot
 from nonebot.rule import to_me
 from nonebot.permission import SUPERUSER
-from nonebot.matcher import Matcher
 
 
 reboot = on_command(
@@ -17,7 +16,7 @@ reboot = on_command(
 
 
 @reboot.handle()
-async def rebootHandler(matcher: Matcher) -> None:
+async def rebootHandler() -> None:
     """
     重启
     """

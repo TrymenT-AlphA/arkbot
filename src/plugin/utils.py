@@ -12,7 +12,7 @@ default_headers = {
 async def download_async(url: str,
                          headers: dict = None,
                          stringify: bool = False) -> bytes or str:
-    """一部下载
+    """异步下载
 
     Args:
         url (str): 下载链接

@@ -5,6 +5,7 @@ from datetime import datetime
 from nonebot.plugin import on_message
 from nonebot.matcher import Matcher
 from nonebot.adapters import Event
+from fake_useragent import UserAgent
 import yaml
 
 from .utils import download_async
@@ -24,12 +25,14 @@ AutoPicSave = on_message(rule=autoPicSaveRule)
 
 
 @AutoPicSave.handle()
-async def handleAutoPicSave(matcher: Matcher, event: Event) -> None:
+async def autoPicSaveHandler(matcher: Matcher, event: Event) -> None:
     _, group_id, user_id = event.get_session_id().split('_')
+    if not os.path.exists(f"data/autopicsave/{group_id}"):
+        os.mkdir(f"data/autopicsave/{group_id}")
     message = event.get_message()
-    if message[0].type == 'image':
-        content = await download_async(message[0].data['url'])
-        if not os.path.exists(f"data/autopicsave/{group_id}"):
-            os.mkdir(f"data/autopicsave/{group_id}")
-        with open(f"data/autopicsave/{group_id}/{int(datetime.now().timestamp())}-{user_id}.gif", 'wb') as gif:
-            gif.write(content)
+    for message_segment in message:
+        if message_segment.type == 'image':
+            content = await download_async(url = message_segment.data['url'])
+            gif_name = datetime.now().strftime(r"[%Y-%m-%d]%Hh%Mm%Ss.%f") + f"@{user_id}.gif"
+            with open(f"data/autopicsave/{group_id}/{gif_name}", 'wb') as gif:
+                gif.write(content)

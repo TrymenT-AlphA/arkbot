@@ -28,6 +28,7 @@ baidu-aip = "*"
 fake-useragent = "*"
 pillow = "*"
 moviepy = "*"
+pymysql = "*"
 
 [dev-packages]
 

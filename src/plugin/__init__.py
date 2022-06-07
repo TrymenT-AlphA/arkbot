@@ -6,3 +6,4 @@ from . import greeting
 from . import welcome
 from . import petpet
 from . import autopicsave
+from . import enemy

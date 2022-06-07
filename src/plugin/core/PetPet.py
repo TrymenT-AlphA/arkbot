@@ -1,3 +1,4 @@
+# encoding:utf-8
 from PIL import Image as IMG
 from PIL import ImageOps
 from moviepy.editor import ImageSequenceClip as imageclip

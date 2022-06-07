@@ -1,0 +1,3 @@
+[submodule "Arknights-Bot-Resource"]
+	path = Arknights-Bot-Resource
+	url = git@github.com:yuanyan3060/Arknights-Bot-Resource.git

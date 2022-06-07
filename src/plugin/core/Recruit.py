@@ -124,6 +124,8 @@ class Recruit:
             selections = []
             for i in range(1, 4):
                 for each in combinations(tags, i):
+                    if each == ('资深干员',):
+                        continue
                     selections.append(each)
             selections.reverse()
             # 获取所有结果

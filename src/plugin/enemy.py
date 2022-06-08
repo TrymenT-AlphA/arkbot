@@ -3,6 +3,8 @@ from nonebot import on_command
 from nonebot.rule import to_me
 from nonebot.matcher import Matcher
 from nonebot.permission import SUPERUSER
+from nonebot.config import Config
+from nonebot.log import logger
 
 from .core.Enemy import Enemy
 

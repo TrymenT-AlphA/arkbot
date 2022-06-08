@@ -29,6 +29,7 @@ fake-useragent = "*"
 pillow = "*"
 moviepy = "*"
 pymysql = "*"
+tqdm = "*"
 
 [dev-packages]
 

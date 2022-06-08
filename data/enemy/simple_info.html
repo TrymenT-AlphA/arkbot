@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<style>
+    * {
+        font-family: 霞鹜文楷;
+    }
+    .enemyCard {
+        width: 600px;
+    }
+    .enemyInfo {
+        float: left;
+    }
+    #enemyIndex, 
+    #name,
+    #enemyRace,
+    #attackType {
+        display: inline-block;
+        margin-top: 9px;
+    }
+    #name,
+    #enemyRace {
+        font-weight: bold;
+    }
+    #enemyIndex {
+        color: #fff;
+        background-color: #000;
+        padding-left: 5px;
+        padding-right: 5px;
+        text-align: center;
+    }
+    #name {
+        color: #000;
+        font-size: 210%;
+    }
+    #enemyRace {
+        color: #52605e;
+    }
+    #attackType {
+        border: 2px solid gray;
+    }
+    .attrBox {
+        float: left;
+        width: 100px;
+        height: 83px;
+        margin: 5px;
+        border: 5px solid gray;
+    }
+    .attrtext,
+    .attrchar {
+        float: top;
+        text-align: center;
+        font-weight: bold;
+    }
+    .attrchar {
+        font-size: 300%;
+    }
+    .description,
+    .ability {
+        margin: 5px;
+    }
+</style>
+
+<body>
+    <div class="enemyCard">
+        <div class='header'>
+            <img style="float:left;" src="file:///C:\Users\ChongKai\Desktop\arknightsbot/Arknights-Bot-Resource/enemy/enemy_2016_csphtm.png" alt="">
+            <!-- <img style="float:left;" src="file:///C:\Users\ChongKai\Desktop\arknightsbot\enemy_1000_gopro.png" alt="enemy_1000_gopro.png "> -->
+            <span class='enemyInfo'>
+                <span id="enemyIndex">PTM</span><br>
+                <span id="name">卢西恩，“猩红血钻”</span><br>
+                <span id="enemyRace"></span><br>
+                <span id="attackType">
+                    <span style="background-color: gray; padding-left: 3px; padding-right: 3px; color: #fff;">攻击方式</span>
+                    <span style="padding-left: 3px; padding-right: 3px;">近战</span>
+                </span>
+            </span>
+        </div>
+        <div style="clear: left;"></div>
+        <div class='attributes'>
+            <div class="attrBox">
+                <div class="attrtext" id="endure">耐久</div>
+                <div class="attrchar" id="endure">S</div>
+            </div>
+            <div class="attrBox">
+                <div class="attrtext" id="attack">攻击力</div>
+                <div class="attrchar" id="attack">A+</div>
+            </div>
+            <div class="attrBox">
+                <div class="attrtext" id="defence">防御力</div>
+                <div class="attrchar" id="defence">B</div>
+            </div>
+            <div class="attrBox">
+                <div class="attrtext" id="resistance">法术抗性</div>
+                <div class="attrchar" id="resistance">B</div>
+            </div>
+        </div>
+        <div style="clear: left;"></div>
+        <div class='description'>
+            剧团之灾卢西恩，代号傀影。曾经剧团最受瞩目的新星，剧团长尚未完成的得意之作，即便在与剧团反目，深陷疯狂的如今，血钻的称号仍为他保留。
+        </div>
+        <div class="ability ">
+            进入目标点损失30目标生命；未被阻挡时有几率闪避物理与法术攻击，被阻挡时可以快速移动至其身后并在原地留下一个【不祥幻影】；会使用技能对周围造成物理伤害，攻击和技能无视目标一定护甲且额外造成神经损伤
+        </div>
+    </div>
+</body>
+
+</html>

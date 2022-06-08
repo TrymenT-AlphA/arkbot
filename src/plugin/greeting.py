@@ -7,7 +7,7 @@ from nonebot.adapters.onebot.v11 import Event, MessageSegment
 
 greeting = on_message(
     rule=to_me(),
-    priority=1)
+    priority=0)
 
 
 @greeting.handle()

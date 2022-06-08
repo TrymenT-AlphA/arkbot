@@ -1,4 +1,5 @@
 # encoding:utf-8
+from copyreg import pickle
 from nonebot.log import logger
 import pymysql
 import json
@@ -32,13 +33,13 @@ class Enemy:
         logger.info("开始更新enemy_handbook_table")
         for enemyId, value in tqdm(info.items()):
             sql = f"SELECT enemyId FROM enemy_handbook_table WHERE enemyId=%s"
-            args = str(enemyId)
+            args = json.dumps(enemyId)
             cursor.execute(sql, args)
             if cursor.fetchone() is None:
                 keys, values = zip(*value.items())
                 sql = f"""INSERT INTO enemy_handbook_table ({','.join(keys)}) 
                           VALUES ({','.join(['%s']*len(values))})"""
-                args = tuple(map(str,values))
+                args = tuple(map(json.dumps,values))
                 cursor.execute(sql, args)
         db.commit()
         logger.success("enemy_handbook_table更新完毕！")
@@ -49,14 +50,14 @@ class Enemy:
         for enemy in tqdm(info['enemies']):
             enemyId = enemy['Key']
             sql = f"SELECT enemyId FROM enemy_database WHERE enemyId=%s"
-            args = str(enemyId)
+            args = json.dumps(enemyId)
             cursor.execute(sql, args)
             if cursor.fetchone() is None:
                 keys, values = zip(*enemy.items())
                 keys = ('enemyId',)+keys[1:] #!
                 sql = f"""INSERT INTO enemy_database ({','.join(keys)}) 
                           VALUES ({','.join(['%s']*len(values))})"""
-                args = tuple(map(str,values))
+                args = tuple(map(json.dumps,values))
                 cursor.execute(sql, args)
         db.commit()
         logger.success("enemy_database更新完毕！")
@@ -67,7 +68,7 @@ class Enemy:
     def __init__(self, name = None):
         self.name = name
     
-    def get_handbook_info(self):
+    def get_simple_info(self):
         # 连接数据库
         db = pymysql.connect(
             host=self.database.host,
@@ -81,22 +82,22 @@ class Enemy:
         # 查询name==self.name
         params = (
             'enemyId',
-            'enemyTags',
+            'enemyIndex',
             'name',
             'enemyRace',
-            'enemyLevel',
-            'description',
             'attackType',
+            'endure',
             'attack',
-            'defencce',
+            'defence',
             'resistance',
+            'description',
             'ability',
         )
-        sql = f"SELECT ({','.join(params)}) FROM enemy_handbook_table WHERE name=%s"
-        args = str(self.name)
+        sql = f"SELECT {','.join(params)} FROM enemy_handbook_table WHERE name=%s"
+        args = json.dumps(self.name)
         cursor.execute(sql, args)
         result = cursor.fetchone()
         if result is None:
             return None
         else:
-            return dict(zip(params, result))
+            return dict(zip(params, map(json.loads,result)))

@@ -3,9 +3,7 @@ import os
 from datetime import datetime
 
 from nonebot.plugin import on_message
-from nonebot.matcher import Matcher
 from nonebot.adapters import Event
-from fake_useragent import UserAgent
 import yaml
 
 from .utils import download_async
@@ -25,7 +23,7 @@ AutoPicSave = on_message(rule=autoPicSaveRule)
 
 
 @AutoPicSave.handle()
-async def autoPicSaveHandler(matcher: Matcher, event: Event) -> None:
+async def autoPicSaveHandler(event: Event) -> None:
     _, group_id, user_id = event.get_session_id().split('_')
     if not os.path.exists(f"data/autopicsave/{group_id}"):
         os.mkdir(f"data/autopicsave/{group_id}")

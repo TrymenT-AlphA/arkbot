@@ -52,8 +52,8 @@ class Enemy:
             args = str(enemyId)
             cursor.execute(sql, args)
             if cursor.fetchone() is None:
-                keys, values = zip(*value.items())
-                keys = ('enemyId',)+keys[1:0] #!
+                keys, values = zip(*enemy.items())
+                keys = ('enemyId',)+keys[1:] #!
                 sql = f"""INSERT INTO enemy_database ({','.join(keys)}) 
                           VALUES ({','.join(['%s']*len(values))})"""
                 args = tuple(map(str,values))

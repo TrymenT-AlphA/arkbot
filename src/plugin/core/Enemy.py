@@ -1,8 +1,8 @@
 # encoding:utf-8
-from copyreg import pickle
-from nonebot.log import logger
-import pymysql
 import json
+
+import pymysql
+from nonebot.log import logger
 from tqdm import tqdm
 
 from .Database import Database
@@ -96,8 +96,29 @@ class Enemy:
         sql = f"SELECT {','.join(params)} FROM enemy_handbook_table WHERE name=%s"
         args = json.dumps(self.name)
         cursor.execute(sql, args)
-        result = cursor.fetchone()
-        if result is None:
+        simple_info = cursor.fetchone()
+        if simple_info is None:
             return None
         else:
-            return dict(zip(params, map(json.loads,result)))
+            return dict(zip(params, map(json.loads,simple_info)))
+
+    def get_detail_info(self):
+        # 连接数据库
+        db = pymysql.connect(
+            host=self.database.host,
+            user=self.database.user,
+            password=self.database.password,
+            database=self.database.database)
+        if db is None:
+            logger.error("数据库连接失败")
+            return False
+        cursor = db.cursor()
+        # 查询name==self.name
+        detail_info = self.get_simple_info()
+        if detail_info is None:
+            return None
+        sql = f"SELECT Value FROM enemy_database WHERE enemyId=%s"
+        args = json.dumps(detail_info['enemyId'])
+        cursor.execute(sql, args)
+        detail_info['Value'] = json.loads(cursor.fetchone())
+        return detail_info

@@ -1,10 +1,10 @@
 # encoding:utf-8
 from nonebot import on_command
-from nonebot.rule import to_me
+from nonebot.adapters.onebot.v11 import Message
 from nonebot.matcher import Matcher
 from nonebot.params import CommandArg
+from nonebot.rule import to_me
 from nonebot.typing import T_State
-from nonebot.adapters.onebot.v11 import Message
 
 from .core.Recruit import Recruit
 
@@ -15,7 +15,6 @@ recruit = on_command(
     aliases={"公开招募"},
     priority=0)
 
-
 @recruit.handle()
 async def recruitHandler(matcher: Matcher,
                          args: Message = CommandArg()) -> None:
@@ -24,7 +23,6 @@ async def recruitHandler(matcher: Matcher,
     """
     if len(args) > 0:
         matcher.set_arg('recruit_args', args)
-
 
 @recruit.got('recruit_args', prompt='请博士发送公招截图')
 async def recruitGotter(state: T_State) -> None:

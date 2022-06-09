@@ -6,9 +6,14 @@ from typing import Union, ByteString
 
 
 class BaiduOCR:
-    """
-    百度OCR类
-    """
+
+    _instance = None
+
+    def __new__(cls, *args, **kw):
+        if cls._instance is None:
+            cls._instance = object.__new__(cls, *args, **kw)
+        return cls._instance
+        
     def __init__(self) -> None:
         """
         初始化配置

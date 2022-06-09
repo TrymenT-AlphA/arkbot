@@ -3,8 +3,14 @@ import yaml
 
 
 class Database:
-    """从config/database.yml读取数据库的基本信息
-    """
+
+    _instance = None
+
+    def __new__(cls, *args, **kw):
+        if cls._instance is None:
+            cls._instance = object.__new__(cls, *args, **kw)
+        return cls._instance
+
     def __init__(self) -> None:
         with open('config/database.yml', 'rb') as f:
             info = yaml.load(f, Loader=yaml.FullLoader)

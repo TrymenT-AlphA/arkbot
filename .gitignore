@@ -1,5 +1,4 @@
 /.vscode/
 /accounts/
 __pycache__/
-/data/autopicsave/
-/test/
+/cache/

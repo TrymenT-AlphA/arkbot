@@ -26,6 +26,13 @@ class PetPet:
     squish_translation_factor = [0, 20, 34, 21, 0]
     frames = tuple([f'data/petpet/frame{i}.png' for i in range(5)])
 
+    _instance = None
+
+    def __new__(cls, *args, **kw):
+        if cls._instance is None:
+            cls._instance = object.__new__(cls, *args, **kw)
+        return cls._instance
+
     @classmethod
     def save_gif(cls, gif_frames, dest, fps=10):
         clip = imageclip(gif_frames, fps=fps)

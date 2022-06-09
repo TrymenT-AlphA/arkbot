@@ -1,17 +1,13 @@
 # encoding:utf-8
-from nonebot import require, get_bot
 import bilibili_api.user
 import yaml
+from nonebot import get_bot, require
 
 
 bilibilidynamic = require('nonebot_plugin_apscheduler').scheduler
 
-
 @bilibilidynamic.scheduled_job('interval', minutes=5)
 async def bilibiliDynamicScheduledJob() -> None:
-    """
-    定时获取b站动态并推送
-    """
     bot = get_bot()
     with open('config/bilibilidynamic.yml', 'rb') as f:
         info = yaml.load(f.read(), Loader=yaml.FullLoader)

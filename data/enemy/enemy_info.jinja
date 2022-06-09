@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{  args['name']  }}</title>
+</head>
+
+<style>
+    * {
+        font-family: '霞鹜文楷';
+    }
+    p {
+        font-size: 150%;
+        font-weight: bold;
+    }
+    table{
+        table-layout: fixed;
+        text-align: center;
+        border-radius: 5px;
+        border-spacing: 0;
+        box-shadow: 1px 1px 1px 0px #ccc;
+    }
+    td {
+        text-align: center;
+        border-right: 1px solid #ccc;
+        border-bottom: 1px solid #ccc;
+    }
+    td:last-child {
+        border-right: 0;
+    }
+    tr:last-child td{
+        border-bottom: 0;
+    }
+    .key{
+        font-weight: bold;
+        background-color: rgba(235, 235, 235, 0.5);
+    }
+</style>
+
+<body>
+    <table width="800px">
+        <tr class="key">
+            <td colspan="4">
+                {{ args['name'] }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <img src="{{ args['pic'] }}">
+            </td>
+            <td colspan="3">
+                {{ args['description'] }}
+            </td>
+        </tr>
+        <tr class="key">
+            <td>种类</td>
+            <td>单位级别</td>
+            <td>攻击方式</td>
+            <td>行动方式</td>
+        </tr>
+        <tr>
+            <td>{{ args['enemyRace'] }}</td>
+            <td>
+            {% if args['enemyLevel'] == "NORMAL" %}
+            普通
+            {% elif args['enemyLevel'] == "ELITE" %}
+            精英
+            {% elif args['enemyLevel'] == "BOSS" %}
+            领袖
+            {% endif %}
+            </td>
+            <td>{{ args['attackType'] }}</td>
+            <td>
+            {% if "【飞行单位】" in args['Value'][0]['enemyData']['description']['m_value'] %}
+            飞行
+            {% else %}
+            地面
+            {% endif %}
+            </td>
+        </tr>
+        <tr class="key">
+            <td>耐久</td>
+            <td>攻击力</td>
+            <td>防御力</td>
+            <td>法术抗性</td>
+        </tr>
+        <tr>
+            <td>{{ args['endure'] }}</td>
+            <td>{{ args['attack'] }}</td>
+            <td>{{ args['defence'] }}</td>
+            <td>{{ args['resistance'] }}</td>
+        </tr>
+        <tr class="key">
+            <td colspan="4">能力</td>
+        </tr>
+        <tr>
+            <td colspan="4">
+            {% if args['ability'] is none %}
+            -
+            {% else %}
+            {{ args['ability'] }}
+            {% endif %}
+            </td>
+        </tr>
+    </table>
+    {% for v in args['Value'] %}
+    <p style="text-align: bottom;">level {{ loop.index0 }}</p>
+    <!-- <hr style="height:1px;border:none;border-top:1px solid #ccc;"/> -->
+    <table width="800px">
+        <tr class="key">
+            <td colspan="5">描述</td>
+        </tr>
+        <tr>
+            <td colspan="5">
+            {% if v['enemyData']['description']['m_defined'] %}
+            {{ v['enemyData']['description']['m_value'] }}
+            {% else %}
+            -
+            {% endif %}
+            </td>
+        </tr>
+        <tr class="key">
+            <td>最大生命值</td>
+            <td>攻击力</td>
+            <td>防御力</td>
+            <td>法术抗性</td>
+            <td>数量</td>
+        </tr>
+        <tr>
+            <td>
+            {% if v['enemyData']['attributes']['maxHp']['m_defined'] %}
+            {{ v['enemyData']['attributes']['maxHp']['m_value'] }}
+            {% else %}
+            -
+            {% endif %}
+            </td>
+            <td>
+            {% if v['enemyData']['attributes']['atk']['m_defined'] %}
+            {{ v['enemyData']['attributes']['atk']['m_value'] }}
+            {% else %}
+            -
+            {% endif %}
+            </td>
+            <td>
+            {% if v['enemyData']['attributes']['def']['m_defined'] %}
+            {{ v['enemyData']['attributes']['def']['m_value'] }}
+            {% else %}
+            -
+            {% endif %}
+            </td>
+            <td>
+            {% if v['enemyData']['attributes']['magicResistance']['m_defined'] %}
+            {{ v['enemyData']['attributes']['magicResistance']['m_value'] }}
+            {% else %}
+            -
+            {% endif %}
+            </td>
+            <td>
+            {% if v['enemyData']['lifePointReduce']['m_defined'] %}
+            {{ v['enemyData']['lifePointReduce']['m_value'] }}
+            {% else %}
+            -
+            {% endif %}
+            </td>
+        </tr>
+        <tr class="key">
+            <td>攻击间隔</td>
+            <td>攻击范围半径</td>
+            <td>移动速度</td>
+            <td>重量等级</td>
+            <td>生命恢复速度</td>
+        </tr>
+        <tr>				
+            <td>
+            {% if v['enemyData']['attributes']['baseAttackTime']['m_defined'] %}
+            {{ v['enemyData']['attributes']['baseAttackTime']['m_value'] }}
+            {% else %}
+            -
+            {% endif %}
+            </td>
+            <td>
+            {{ v['enemyData']['rangeRadius']['m_value'] }}
+            </td>
+            <td>
+            {% if v['enemyData']['attributes']['moveSpeed']['m_defined'] %}
+            {{ v['enemyData']['attributes']['moveSpeed']['m_value'] }}
+            {% else %}
+            -
+            {% endif %}
+            </td>
+            <td>
+            {% if v['enemyData']['attributes']['massLevel']['m_defined'] %}
+            {{ v['enemyData']['attributes']['massLevel']['m_value'] }}
+            {% else %}
+            -
+            {% endif %}
+            </td>
+            <td>
+            {% if v['enemyData']['attributes']['hpRecoveryPerSec']['m_defined'] %}
+            {{ v['enemyData']['attributes']['hpRecoveryPerSec']['m_value'] }}
+            {% else %}
+            -
+            {% endif %}
+            </td>
+        </tr>
+        <tr class="key">
+            <td colspan="5">
+                <i class="fa-shield-alt fas"></i>
+                异常状态抗性
+            </td>
+        </tr>
+        <tr class="key">
+            <td>沉默抗性</td>
+            <td>眩晕抗性</td>
+            <td>沉睡抗性</td>
+            <td>冻结抗性</td>
+            <td>浮空抗性</td>
+        </tr>
+        <tr>
+            <td>
+                <span style="background: #2b2b2b; color: white; padding: 0px 10px; border-radius: 20px; box-shadow: 0 0 4px 0px #590707;">
+                    {% if v['enemyData']['attributes']['silenceImmune']['m_defined'] and v['enemyData']['attributes']['silenceImmune']['m_value'] %}
+                    <b>有</b>
+                    {% else %}
+                    <b>无</b>
+                    {% endif %}
+                </span>
+            </td>
+            <td>
+                <span style="background: #2b2b2b; color: white; padding: 0px 10px; border-radius: 20px; box-shadow: 0 0 4px 0px #590707;">
+                    {% if v['enemyData']['attributes']['stunImmune']['m_defined'] and v['enemyData']['attributes']['stunImmune']['m_value'] %}
+                    <b>有</b>
+                    {% else %}
+                    <b>无</b>
+                    {% endif %}
+                </span>
+            </td>
+            <td>
+                <span style="background: #2b2b2b; color: white; padding: 0px 10px; border-radius: 20px; box-shadow: 0 0 4px 0px #590707;">
+                    {% if v['enemyData']['attributes']['sleepImmune']['m_defined'] and v['enemyData']['attributes']['sleepImmune']['m_value'] %}
+                    <b>有</b>
+                    {% else %}
+                    <b>无</b>
+                    {% endif %}
+                </span>
+            </td>
+            <td>
+                <span style="background: #2b2b2b; color: white; padding: 0px 10px; border-radius: 20px; box-shadow: 0 0 4px 0px #590707;">
+                    {% if v['enemyData']['attributes']['frozenImmune']['m_defined'] and v['enemyData']['attributes']['frozenImmune']['m_value'] %}
+                    <b>有</b>
+                    {% else %}
+                    <b>无</b>
+                    {% endif %}
+                </span>
+            </td>
+            <td>
+                <span style="background: #2b2b2b; color: white; padding: 0px 10px; border-radius: 20px; box-shadow: 0 0 4px 0px #590707;">
+                    {% if v['enemyData']['attributes']['levitateImmune']['m_defined'] and v['enemyData']['attributes']['levitateImmune']['m_value'] %}
+                    <b>有</b>
+                    {% else %}
+                    <b>无</b>
+                    {% endif %}
+                </span>
+            </td>
+        </tr>
+    </table>
+    {% endfor %}
+</body>
+
+</html>

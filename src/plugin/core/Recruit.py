@@ -16,7 +16,7 @@ class Recruit:
         初始化百度ocr和白名单
         """
         self.ocr = BaiduOCR()
-        with open('data/recruit.yml', 'rb') as f:
+        with open('data/recruit/recruit.yml', 'rb') as f:
             info = yaml.load(f.read(), Loader=yaml.FullLoader)
         self.normal_ops = info['普通干员']
         self.special_ops = info['高级资深干员']

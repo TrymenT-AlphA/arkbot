@@ -85,6 +85,7 @@ class Enemy:
             'enemyIndex',
             'name',
             'enemyRace',
+            'enemyLevel',
             'attackType',
             'endure',
             'attack',
@@ -120,5 +121,5 @@ class Enemy:
         sql = f"SELECT Value FROM enemy_database WHERE enemyId=%s"
         args = json.dumps(detail_info['enemyId'])
         cursor.execute(sql, args)
-        detail_info['Value'] = json.loads(cursor.fetchone())
+        detail_info['Value'] = json.loads(cursor.fetchone()[0])
         return detail_info

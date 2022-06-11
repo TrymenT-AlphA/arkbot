@@ -1,16 +1,17 @@
 # encoding:utf-8
-import yaml
 from functools import cmp_to_key
 from itertools import combinations
 
-from .BaiduOCR import BaiduOCR
+import yaml
+
 from ..utils import download_async
+from .BaiduOCR import BaiduOCR
+from .Singleton import Singleton
 
 
+@Singleton
 class Recruit:
-    """
-    公开招募类
-    """
+
     def __init__(self):
         """
         初始化百度ocr和白名单

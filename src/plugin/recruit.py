@@ -12,25 +12,17 @@ from .core.Recruit import Recruit
 recruit = on_command(
     cmd='recruit',
     rule=to_me(),
-    aliases={"公开招募"},
-    priority=0)
+    aliases={"公开招募"})
 
 @recruit.handle()
 async def recruitHandler(matcher: Matcher,
                          args: Message = CommandArg()) -> None:
-    """
-    首次触发，如果携带参数则直接设置参数
-    """
     if len(args) > 0:
         matcher.set_arg('recruit_args', args)
 
 @recruit.got('recruit_args', prompt='请博士发送公招截图')
 async def recruitGotter(state: T_State) -> None:
-    """
-    进入会话后等待发送图片
-    """
     recruit_args = state['recruit_args']
-
     if len(recruit_args) == 0:
         await recruit.reject('请博士发送公招截图')
 

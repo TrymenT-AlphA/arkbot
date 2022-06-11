@@ -26,8 +26,11 @@ enemyupdate = on_command(
 @enemyupdate.handle()
 async def enemyupdateHandler(matcher: Matcher) -> None:
     await matcher.send('开始更新本地仓库...')
-    repo = Repo('./Arknights-Bot-Resource')
-    logger.info(repo.git.pull())
+    try:
+        repo = Repo('./Arknights-Bot-Resource')
+        logger.info(repo.git.pull())
+    except:
+        logger.error('无法更新本地仓库!')
     await matcher.send('本地仓库更新完毕！')
     await matcher.send('开始更新敌方数据库...')
     await matcher.send(f'更新了{Enemy.update()}条信息')
@@ -43,12 +46,12 @@ enemyquery = on_command(
 async def enemyqueryHandler(matcher: Matcher, args: Message = CommandArg()) -> None:
     name = args.extract_plain_text()
     enemy = Enemy(name)
-    info = enemy.get_detail_info()
+    info = enemy.get_info()
     if info is None:
         await matcher.finish("数据库中没有敌方信息")
 
     info['pic'] = f"file:///{os.getcwd()}/Arknights-Bot-Resource/enemy/{info['enemyId']}.png"
-    
+
     def untag(string: str) -> str:
         tagpattern = re.compile(r'<.*?>')
         for tag in re.findall(tagpattern, string):
@@ -57,17 +60,12 @@ async def enemyqueryHandler(matcher: Matcher, args: Message = CommandArg()) -> N
 
     try:
         info['description'] = untag(info['description'])
-    except:
-        pass
-    try:
         info['ability'] = untag(info['ability'])
-    except:
-        pass
-    try:
         info['Value'][0]['enemyData']['description']['m_value'] = untag(info['Value'][0]['enemyData']['description']['m_value'])
     except:
         pass
 
+    # todo
     for i in range(1, len(info['Value'])):
         for k, v in info['Value'][i]['enemyData'].items():
             if k != 'attributes':
@@ -83,8 +81,8 @@ async def enemyqueryHandler(matcher: Matcher, args: Message = CommandArg()) -> N
     environment = jinja2.Environment(loader=jinja2.FileSystemLoader('data/'))
     template = environment.get_template('./enemy_info.jinja')
     html = template.render(args = info)
-    with open('enemy_info.html', 'wb') as f:
-        f.write(html.encode('utf8'))
+    with open('enemy_info.html', 'w', encoding='utf8') as f:
+        f.write(html)
     options = {
         'width': 820,
         "enable-local-file-access": None

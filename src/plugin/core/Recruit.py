@@ -2,23 +2,15 @@
 from functools import cmp_to_key
 from itertools import combinations
 
-import yaml
-
-from ..utils import download_async
+from ..utils import download_async, load_yaml
 from .BaiduOCR import BaiduOCR
-from .Singleton import Singleton
 
 
-@Singleton
 class Recruit:
 
     def __init__(self):
-        """
-        初始化百度ocr和白名单
-        """
         self.ocr = BaiduOCR()
-        with open('data/recruit.yml', 'rb') as f:
-            info = yaml.load(f.read(), Loader=yaml.FullLoader)
+        info = load_yaml('data/recruit.yml')
         self.normal_ops = info['普通干员']
         self.special_ops = info['高级资深干员']
         self.words_white_list = [
@@ -27,40 +19,28 @@ class Recruit:
             '新手', '召唤', '防护', '支援', '控场', '近战位', '远程位', '快速复活', '费用回复', '支援机械',
         ]
 
-    async def get_ocr_file(self, file: str, accurate: bool = False) -> dict:
-        """
-        通过文件请求api识别
-        """
+    def _ocr_file(self, file: str, accurate: bool = False) -> dict:
         with open(file, 'rb') as f:
             image = f.read()
         # 是否采用高精度识别
         if accurate:
-            return await self.ocr.get_basic_accurate_ocr(image)
+            return self.ocr.basic_accurate_ocr(image)
         else:
-            return await self.ocr.get_general_basic_ocr(image)
+            return self.ocr.general_basic_ocr(image)
 
-    async def get_ocr_url(self, url: str, accurate: bool = False) -> dict:
-        """
-        通过url请求api识别
-        """
+    async def _ocr_url(self, url: str, accurate: bool = False) -> dict:
         image = await download_async(url)
         # 是否采用高精度识别
         if accurate:
-            return await self.ocr.get_basic_accurate_ocr(image)
+            return self.ocr.basic_accurate_ocr(image)
         else:
-            return await self.ocr.get_general_basic_ocr(image)
+            return self.ocr.general_basic_ocr(image)
 
-    async def get_tags(self,
-                       src: str,
-                       src_t: str,
-                       accurate: bool = False) -> list:
-        """
-        获取识别结果中的tag
-        """
+    async def get_tags(self, src: str, src_t: str, accurate: bool = False) -> list:
         if src_t == 'file':
-            info = await self.get_ocr_file(src, accurate)
+            info = self._ocr_file(src, accurate)
         elif src_t == 'url':
-            info = await self.get_ocr_url(src, accurate)
+            info = await self._ocr_url(src, accurate)
         else:
             return []
         # 获取白名单中的tag
@@ -76,13 +56,7 @@ class Recruit:
                 tags.append(words)
         return tags
 
-    async def get_advice(self,
-                         src: str,
-                         src_t: str,
-                         accurate: bool = False) -> str:
-        """
-        获取公开招募建议
-        """
+    async def get_advice(self, src: str, src_t: str, accurate: bool = False) -> str:
         tags = await self.get_tags(src, src_t, accurate)
         # 有高资直接考虑高资
         if '高级资深干员' in tags:

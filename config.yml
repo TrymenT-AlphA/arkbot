@@ -8,11 +8,15 @@ baiduocr:
   APP_ID: '24759035'
   API_KEY: 't8EPsuHfpd66XBEgvYYmaovs'
   SECRET_KEY: 'QV1k69ESZUZCyo9m5WTNlsC3a4H6S6ai'
+welcome:
+  GROUPS:
+    - 645350897
 autopicsave:
   GROUPS:
     - 645350897
 bilibilidynamic:
   accounts:
     - UID: 161775300
+      RECENT_DID: 
       GROUPS:
         - 645350897

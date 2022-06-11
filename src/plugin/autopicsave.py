@@ -2,18 +2,16 @@
 import os
 from datetime import datetime
 
-import yaml
 from nonebot import on_message
 from nonebot.adapters.onebot.v11 import Event
 
-from .utils import download_async
+from .utils import download_async, load_yaml
 
 
 async def autopicsaveRule(event: Event) -> bool:
     session_id = event.get_session_id()
-    with open('config/autopicsave.yml', 'rb') as f:
-        info = yaml.load(f.read(), Loader=yaml.FullLoader)
-    for group_id in info['enabledgroups']:
+    info = load_yaml('config.yml')['autopicsave']
+    for group_id in info['GROUPS']:
         if f"group_{group_id}" in session_id:
             return True
     return False

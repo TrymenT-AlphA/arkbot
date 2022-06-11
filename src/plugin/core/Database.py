@@ -1,16 +1,54 @@
 # encoding:utf-8
-import yaml
+from typing import Any
 
-from .Singleton import Singleton
+import pymysql
+
+from ..utils import load_yaml
 
 
-@Singleton
 class Database:
 
     def __init__(self) -> None:
-        with open('config.yml', 'r', encoding='utf8') as f:
-            info = yaml.load(f, Loader=yaml.FullLoader)['database']
+        self.db = None
+        self.cursor = None
+        info = load_yaml('config.yml')['database']
         self.host = info['HOST']
         self.user = info['USER']
         self.password = info['PASSWORD']
         self.database = info['DATABASE']
+
+    def _connect(self) -> None:
+        self.db = pymysql.connect(
+            host=self.host,
+            user=self.user,
+            password=self.password,
+            database=self.database)
+        if self.db is None:
+            raise RuntimeError('cannot connect to database!')
+        self.cursor = self.db.cursor()
+
+    def _close(self) -> None:
+        if self.cursor is not None:
+            self.cursor.close()
+        if self.db is not None:
+            self.db.close()
+
+    def execute(self, sql: str, args: tuple or list or None) -> None:
+        self._connect()
+        try:
+            self.cursor.execute(sql, args)
+        except:
+            self.db.rollback()
+        finally:
+            self.db.commit()
+            self._close()
+
+    def fetchone(self) -> Any:
+        if self.cursor is None:
+            raise RuntimeError('fetch before execute!')
+        return self.cursor.fetchone()
+    
+    def fetchall(self) -> Any:
+        if self.cursor is None:
+            raise RuntimeError('fetch before execute!')
+        return self.cursor.fetchall()

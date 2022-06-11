@@ -34,6 +34,45 @@ COMMAND_SEP=[命令参数分割符]
 
 ```
 
+sql
+```
+CREATE TABLE `enemy_handbook_table` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `enemyId` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `enemyIndex` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `enemyTags` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `sortId` text,
+  `name` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `enemyRace` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `enemyLevel` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `attackType` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `endure` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `attack` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `defence` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `resistance` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `ability` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `isInvalidKilled` text,
+  `overrideKillCntInfos` text,
+  `hideInHandbook` text,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=551 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `enemy_database` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `enemyId` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `Value` text,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=576 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `bilibilidynamic` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `uid` text,
+  `recent_did` text,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+```
+
 ## 运行
 
 > pipenv python bot.py

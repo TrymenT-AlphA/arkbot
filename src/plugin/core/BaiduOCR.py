@@ -4,25 +4,20 @@ import asyncio
 from aip import AipOcr
 from typing import Union, ByteString
 
+from .Singleton import Singleton
 
+@Singleton
 class BaiduOCR:
-
-    _instance = None
-
-    def __new__(cls, *args, **kw):
-        if cls._instance is None:
-            cls._instance = object.__new__(cls, *args, **kw)
-        return cls._instance
         
     def __init__(self) -> None:
         """
         初始化配置
         """
-        with open('config/ocr.yml', 'rb') as f:
-            recruit_config = yaml.load(f, Loader=yaml.FullLoader)['baidu-ocr']
-        self.APP_ID = recruit_config['APP_ID']
-        self.API_KEY = recruit_config['API_KEY']
-        self.SECRET_KEY = recruit_config['SECRET_KEY']
+        with open('config.yml', 'rb') as f:
+            info = yaml.load(f, Loader=yaml.FullLoader)['baiduocr']
+        self.APP_ID = info['APP_ID']
+        self.API_KEY = info['API_KEY']
+        self.SECRET_KEY = info['SECRET_KEY']
         self.client = AipOcr(self.APP_ID, self.API_KEY, self.SECRET_KEY)
 
     async def get_general_basic_ocr(self,

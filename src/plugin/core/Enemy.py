@@ -9,15 +9,15 @@ from .Database import Database
 
 
 class Enemy:
-    """明日方舟敌方单位
-    """
+
     database = Database()
 
     @classmethod
-    def update(cls) -> bool:
+    def update(cls) -> int:
         path_1 = 'Arknights-Bot-Resource/gamedata/excel/enemy_handbook_table.json'
         path_2 = 'Arknights-Bot-Resource/gamedata/levels/enemydata/enemy_database.json'
         # 连接数据库
+        cnt = 0
         db = pymysql.connect(
             host=cls.database.host,
             user=cls.database.user,
@@ -36,10 +36,11 @@ class Enemy:
             args = json.dumps(enemyId)
             cursor.execute(sql, args)
             if cursor.fetchone() is None:
+                cnt += 1
                 keys, values = zip(*value.items())
                 sql = f"""INSERT INTO enemy_handbook_table ({','.join(keys)}) 
                           VALUES ({','.join(['%s']*len(values))})"""
-                args = tuple(map(json.dumps,values))
+                args = tuple(map(json.dumps, values))
                 cursor.execute(sql, args)
         db.commit()
         logger.success("enemy_handbook_table更新完毕！")
@@ -53,21 +54,22 @@ class Enemy:
             args = json.dumps(enemyId)
             cursor.execute(sql, args)
             if cursor.fetchone() is None:
+                cnt += 1
                 keys, values = zip(*enemy.items())
-                keys = ('enemyId',)+keys[1:] #!
+                keys = ('enemyId',)+keys[1:]  # !
                 sql = f"""INSERT INTO enemy_database ({','.join(keys)}) 
                           VALUES ({','.join(['%s']*len(values))})"""
-                args = tuple(map(json.dumps,values))
+                args = tuple(map(json.dumps, values))
                 cursor.execute(sql, args)
         db.commit()
         logger.success("enemy_database更新完毕！")
         # 关闭数据库
         cursor.close(), db.close()
-        return True
+        return cnt
 
-    def __init__(self, name = None):
+    def __init__(self, name=None):
         self.name = name
-    
+
     def get_simple_info(self):
         # 连接数据库
         db = pymysql.connect(
@@ -101,7 +103,7 @@ class Enemy:
         if simple_info is None:
             return None
         else:
-            return dict(zip(params, map(json.loads,simple_info)))
+            return dict(zip(params, map(json.loads, simple_info)))
 
     def get_detail_info(self):
         # 连接数据库

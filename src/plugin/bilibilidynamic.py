@@ -9,8 +9,8 @@ bilibilidynamic = require('nonebot_plugin_apscheduler').scheduler
 @bilibilidynamic.scheduled_job('interval', minutes=5)
 async def bilibiliDynamicScheduledJob() -> None:
     bot = get_bot()
-    with open('config/bilibilidynamic.yml', 'rb') as f:
-        info = yaml.load(f.read(), Loader=yaml.FullLoader)
+    with open('config.yml', 'rb') as f:
+        info = yaml.load(f.read(), Loader=yaml.FullLoader)['bilibilidynamic']
     for i, account in enumerate(info['accounts']):
         # 读取当前用户信息
         uid = account['uid']

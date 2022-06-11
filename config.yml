@@ -1,8 +1,8 @@
 database:
   HOST: '101.43.25.73'
   USER: 'root'
-  PWD: ''
-  DB: 'arknightsbotresource'
+  PASSWORD: ''
+  DATABASE: 'arknightsbotresource'
 baiduocr:
   APP_NAME: 'MisakaTranslator'
   APP_ID: '24759035'

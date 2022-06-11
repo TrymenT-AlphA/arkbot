@@ -4,12 +4,12 @@ from nonebot import get_bot, require
 
 from .core.Database import Database
 
-from .utils import load_yaml, dumps_json
+from .utils import load_yaml, dumps_json, loads_json
 
 
 bilibilidynamic = require('nonebot_plugin_apscheduler').scheduler
 
-@bilibilidynamic.scheduled_job('interval', minutes=5)
+@bilibilidynamic.scheduled_job('interval', minutes=1)
 async def bilibiliDynamicScheduledJob() -> None:
     bot = get_bot()
     info = load_yaml('config.yml')['bilibilidynamic']
@@ -22,6 +22,9 @@ async def bilibiliDynamicScheduledJob() -> None:
         if recent_did is None:
             recent_did = 0
             db.execute('INSERT INTO bilibilidynamic (uid, recent_did) VALUES(%s,%s)', (dumps_json(uid), dumps_json(0)))
+            db.commit()
+        else:
+            recent_did = loads_json(*recent_did)
         # 获取最新动态
         user = User(uid)
         latest_dynamic = (await user.get_dynamics())['cards'][0]
@@ -52,4 +55,4 @@ async def bilibiliDynamicScheduledJob() -> None:
                     group_id = group_id,
                     message = message)
         # 更新最近动态id
-        db.execute("UPDATE bilibilidynamic SET recent_did=%s WHERE uid=%s", dumps_json(latest_did), dumps_json(uid))
+        db.execute("UPDATE bilibilidynamic SET recent_did=%s WHERE uid=%s", (dumps_json(latest_did), dumps_json(uid)))

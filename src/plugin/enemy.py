@@ -1,7 +1,6 @@
 # encoding:utf-8
-import os
-import re
-from tkinter import E
+from os import getcwd, remove 
+from re import compile, findall
 
 import imgkit
 import jinja2
@@ -50,11 +49,11 @@ async def enemyqueryHandler(matcher: Matcher, args: Message = CommandArg()) -> N
     if info is None:
         await matcher.finish("数据库中没有敌方信息")
 
-    info['pic'] = f"file:///{os.getcwd()}/Arknights-Bot-Resource/enemy/{info['enemyId']}.png"
+    info['pic'] = f"file:///{getcwd()}/Arknights-Bot-Resource/enemy/{info['enemyId']}.png"
 
     def untag(string: str) -> str:
-        tagpattern = re.compile(r'<.*?>')
-        for tag in re.findall(tagpattern, string):
+        tagpattern = compile(r'<.*?>')
+        for tag in findall(tagpattern, string):
             string = string.replace(tag, '')
         return string
 
@@ -89,6 +88,6 @@ async def enemyqueryHandler(matcher: Matcher, args: Message = CommandArg()) -> N
     }
     with open('enemy_info.html', 'r', encoding='utf8') as f:
         imgkit.from_file(f, 'enemy_info.jpg', options=options)
-    await matcher.send(MessageSegment.image(f"file:///{os.getcwd()}/enemy_info.jpg"))
-    os.remove('enemy_info.html')
-    os.remove('enemy_info.jpg')
+    await matcher.send(MessageSegment.image(f"file:///{getcwd()}/enemy_info.jpg"))
+    remove('enemy_info.html')
+    remove('enemy_info.jpg')

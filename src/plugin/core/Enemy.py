@@ -16,8 +16,10 @@ class Enemy:
         # 更新 enemy_handbook_table.json
         info = load_json(enemy_handbook_table)
         logger.info("开始更新enemy_handbook_table")
+        cnt = 0
         for enemyId, value in tqdm(info.items()):
-            db.execute("SELECT enemyId FROM enemy_handbook_table WHERE enemyId=%s", dumps_json(enemyId))
+            db.execute(
+                "SELECT enemyId FROM enemy_handbook_table WHERE enemyId=%s", dumps_json(enemyId))
             if db.fetchone() is not None:
                 continue
             cnt += 1
@@ -32,7 +34,8 @@ class Enemy:
         logger.info("开始更新enemy_database")
         for enemy in tqdm(info['enemies']):
             enemyId = enemy['Key']
-            db.execute("SELECT enemyId FROM enemy_database WHERE enemyId=%s", dumps_json(enemyId))
+            db.execute(
+                "SELECT enemyId FROM enemy_database WHERE enemyId=%s", dumps_json(enemyId))
             if db.fetchone() is not None:
                 continue
             cnt += 1
@@ -72,7 +75,7 @@ class Enemy:
         if values is None:
             return None
         sql = f"SELECT Value FROM enemy_database WHERE enemyId=%s"
-        args = dumps_json(values[0])  # enemyId
+        args = dumps_json(loads_json(values[0]))  # enemyId
         db.execute(sql, args)
         values += db.fetchone()
-        return dict(keys, map(loads_json, values))
+        return dict(zip(keys, map(loads_json, values)))

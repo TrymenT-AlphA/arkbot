@@ -30,6 +30,8 @@ pillow = "*"
 moviepy = "*"
 pymysql = "*"
 tqdm = "*"
+imgkit = "*"
+jinja2 = "*"
 
 [dev-packages]
 

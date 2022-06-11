@@ -33,21 +33,26 @@ class Database:
         if self.db is not None:
             self.db.close()
 
+    def _commit(self) -> None:
+        if self.db is not None:
+            self.db.commit()
+        self._close()
+
     def execute(self, sql: str, args: tuple or list or None) -> None:
         self._connect()
         try:
             self.cursor.execute(sql, args)
         except:
             self.db.rollback()
+            raise RuntimeError('execute error')
         finally:
-            self.db.commit()
-            self._close()
+            self._commit()
 
     def fetchone(self) -> Any:
         if self.cursor is None:
             raise RuntimeError('fetch before execute!')
         return self.cursor.fetchone()
-    
+
     def fetchall(self) -> Any:
         if self.cursor is None:
             raise RuntimeError('fetch before execute!')

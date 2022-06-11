@@ -34,39 +34,6 @@ COMMAND_SEP=[命令参数分割符]
 
 ```
 
-b站动态推送
-```
-accounts:
-- recent_did:
-  uid: # 订阅账号的uid
-enabledgroups:
-- # 启用功能的群聊
-```
-
-数据库
-```
-database:
-  host: # 主机ip  
-  user: # 用户名
-  password: # 密码
-  database: # 数据库名称
-```
-
-百度OCR
-```
-baidu-ocr:
-  app_name: # 应用名称
-  APP_ID: # app_id
-  API_KEY: # api_key
-  SECRET_KEY: # secret_key
-```
-
-入群提醒
-```
-enabledgroups:
-- # 启用功能的群聊
-```
-
 ## 运行
 
 > pipenv python bot.py
@@ -75,14 +42,24 @@ enabledgroups:
 
 # 更新日志
 
+## 2022/6/11
+
+[-] 自动摸头
+
+[+] 敌方数据查询
+
+[+] 项目重构
+
 ## 2022/6/6
 
 [+] 自动保存群聊图片
+
 ## 2022/6/3
 
 [+] 自动摸头
 
 [+] 使用Pipenv虚拟环境
+
 ## 2022/6/2
 
 [+] 优化动态推送逻辑
@@ -91,6 +68,7 @@ enabledgroups:
 [+] 入群提醒
 
 [+] 简单问候
+
 ## 2022/5/31
 
 [+] 更新日志输出

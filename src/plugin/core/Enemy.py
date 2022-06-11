@@ -68,9 +68,8 @@ class Enemy:
             'ability',
             'Value'
         )
-        sql = f"SELECT {','.join(keys[:-1])} FROM enemy_handbook_table WHERE name=%s"
-        args = dumps_json(self.name)
-        db.execute(sql, args)
+        sql = f"SELECT {','.join(keys[:-1])} FROM enemy_handbook_table WHERE name LIKE '%{self.name}%'"
+        db.execute(sql, None)
         values = db.fetchone()
         if values is None:
             return None

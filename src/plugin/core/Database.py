@@ -41,7 +41,10 @@ class Database:
     def execute(self, sql: str, args: tuple or list or None) -> None:
         self._connect()
         try:
-            self.cursor.execute(sql, args)
+            if args is None:
+                self.cursor.execute(sql)
+            else:
+                self.cursor.execute(sql, args)
         except:
             self.db.rollback()
             raise RuntimeError('execute error')

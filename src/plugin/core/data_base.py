@@ -123,11 +123,11 @@ class Database:
             return self._cursor.fetchone()
         return None
 
-    def fetchall(self) -> tuple[tuple] or None:
+    def fetchall(self) -> Iterable[Iterable] or None:
         """获取所有结果
 
         返回值:
-            tuple[tuple] or None: 所有结果
+            Iterable[Iterable] or None: 所有结果
         """
         if self._cursor is not None:
             return self._cursor.fetchall()

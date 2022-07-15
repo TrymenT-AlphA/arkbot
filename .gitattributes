@@ -1,4 +1,0 @@
-config.yml merge=ours
-.env merge=ours
-.env.dev merge=ours
-.env.prod merge=ours

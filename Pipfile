@@ -1,0 +1,40 @@
+# encoding:utf-8
+[project]
+name = "arknightsbot"
+version = "0.1.0"
+description = "arknights bot"
+authors = ["ChongKai <1302393176@qq.com>"]
+license = "GPL-3.0 license"
+readme = "README.md"
+
+[tool.nonebot]
+plugins = ["nonebot_plugin_apscheduler", "nonebot_plugin_gocqhttp"]
+plugin_dirs = ["src"]
+
+
+[[source]]
+url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple/"
+verify_ssl = true
+name = "tunapypi"
+
+[packages]
+nonebot2 = "*"
+nonebot-adapter-onebot = "*"
+nonebot-plugin-apscheduler = "*"
+nonebot-plugin-gocqhttp = "*"
+bilibili-api = "*"
+baidu-api = "*"
+baidu-aip = "*"
+fake-useragent = "*"
+pillow = "*"
+moviepy = "*"
+pymysql = "*"
+tqdm = "*"
+imgkit = "*"
+jinja2 = "*"
+gitpython = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.10"

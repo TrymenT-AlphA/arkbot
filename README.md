@@ -22,6 +22,8 @@
 
 主要资源来自`https://github.com/yuanyan3060/Arknights-Bot-Resource`
 
+运行前克隆该仓库并将文件夹重命名为`arksrc`
+
 取消了机器人自动同步仓库的功能，请在每次更新后手动同步仓库
 
 公开招募相关数据保存在`data/tables.json`中

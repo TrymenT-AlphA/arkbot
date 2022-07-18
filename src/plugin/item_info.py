@@ -11,7 +11,7 @@ from nonebot.params import CommandArg
 from nonebot.permission import SUPERUSER
 from nonebot.rule import to_me
 from .core.ark_item import ArkItem
-from .utils import img_paste
+from .utils import img_paste, json_to_obj
 
 
 ItemUpdate = on_command(
@@ -51,6 +51,10 @@ async def _handler(matcher: Matcher, args: Message = CommandArg()) -> None:
     item_rarity_pic = f"./arksrc/item_rarity_img/sprite_item_r{info['rarity']}.png"
     img_paste(item_pic, item_rarity_pic, f"./{info['iconId']}.png")
     info['pic'] = f"file:///{os.getcwd()}/{info['iconId']}.png"
+    # 计算stage code
+    stage_code = json_to_obj('./data/stage_code.json')
+    for each in info['stageDropList']:
+        each['stageCode'] = stage_code[each['stageId']]
     # 根据jinja模板生成图片
     env = jinja2.Environment(loader=jinja2.FileSystemLoader('data/'))
     temp = env.get_template('./item_info.jinja')

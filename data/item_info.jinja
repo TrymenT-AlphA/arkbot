@@ -59,6 +59,21 @@
         <tr>
             <td>{{ args['description'] }}</td>
         </tr>
+        <tr>
+            <td colspan="2" class="key">掉落</td>
+        </tr>
+        {% if args['stageDropList']|length == 0 %}
+        <tr>
+            <td colspan="2">-</td>
+        </tr>
+        {% else %}
+        {% for v in args['stageDropList'] %}
+        <tr>
+            <td>{{ v['stageCode'] }}</td>
+            <td>{{ v['occPer'] }}</td>
+        </tr>
+        {% endfor %}
+        {% endif %}
     </table>
 </body>
 

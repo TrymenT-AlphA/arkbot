@@ -3,7 +3,7 @@
 """
 from typing import Iterable
 import pymysql
-from ..utils import json_to_obj
+from ..utils import yaml_to_obj
 
 
 class Database:
@@ -14,7 +14,7 @@ class Database:
         """
         self._db = None # 用于连接数据库
         self._cursor = None # 用于操作数据库
-        _ = json_to_obj('config.yml')['database'] # 数据库配置信息
+        _ = yaml_to_obj('config.yml')['database'] # 数据库配置信息
         self._host = _['HOST']
         self._user = _['USER']
         self._password = _['PASSWORD']

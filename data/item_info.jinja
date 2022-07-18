@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ args['name'] }}</title>
+</head>
+
+<style>
+    * {
+        font-family: '霞鹜文楷';
+    }
+    p {
+        font-size: 150%;
+        font-weight: bold;
+    }
+    table{
+        table-layout: fixed;
+        text-align: center;
+        border-radius: 5px;
+        border-spacing: 0;
+        box-shadow: 1px 1px 1px 0px #ccc;
+    }
+    td {
+        text-align: center;
+        border-right: 1px solid #ccc;
+        border-bottom: 1px solid #ccc;
+    }
+    td:last-child {
+        border-right: 0;
+    }
+    tr:last-child td{
+        border-bottom: 0;
+    }
+    .key{
+        font-weight: bold;
+        background-color: rgba(235, 235, 235, 0.5);
+    }
+</style>
+
+<body>
+    <table>
+        <tr >
+            <td colspan="2" style="background-color: pink; color: white">{{ args['name'] }}</td>
+        </tr>
+        <tr>
+            <th rowspan="4">
+                <img src="{{ args['pic'] }}">
+            </th>
+            <td class="key">用途</td>
+        </tr>
+        <tr>
+            <td>{{ args['usage'] }}</td>
+        </tr>
+        <tr>
+            <td class="key">描述</td>
+        </tr>
+        <tr>
+            <td>{{ args['description'] }}</td>
+        </tr>
+    </table>
+</body>
+
+</html>

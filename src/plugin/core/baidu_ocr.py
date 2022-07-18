@@ -2,7 +2,7 @@
 """OCR类,提供文字识别
 """
 from aip import AipOcr
-from ..utils import json_to_obj
+from ..utils import yaml_to_obj
 
 
 class BaiduOCR:
@@ -11,7 +11,7 @@ class BaiduOCR:
     def __init__(self) -> None:
         """读取配置,创建实例
         """
-        _ = json_to_obj('config.yml')['baiduocr'] # OCR配置信息
+        _ = yaml_to_obj('config.yml')['baiduocr'] # OCR配置信息
         self._app_id = _['APP_ID']
         self._api_key = _['API_KEY']
         self._secret_key = _['SECRET_KEY']

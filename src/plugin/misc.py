@@ -23,7 +23,7 @@ async def _on_bot_connect() -> None:
         group_id = '645350897',
         message = '连接成功！高性能です!')
     _db = Database() # 尝试建立数据表
-    _ = json_to_obj('data/tables.json')
+    _ = json_to_obj('./data/tables.json')
     for t_name, sql in _.items():
         _db.execute(f"SHOW TABLES LIKE '{t_name}'")
         if _db.fetchone() is None:

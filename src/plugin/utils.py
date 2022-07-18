@@ -4,10 +4,12 @@
 2. 提供异步url下载
 """
 from typing import Any
+import re
 import json
 import yaml
 from aiohttp import ClientSession
 from fake_useragent import UserAgent
+from PIL import Image
 
 
 # json文件与python对象的转换
@@ -36,7 +38,7 @@ def obj_to_json(obj: Any, path: str) -> None:
 
 
 # yaml文件与python对象的转换
-def json_to_obj(path: str) -> Any:
+def yaml_to_obj(path: str) -> Any:
     """读取yaml文件,并返回一个pyhton对象
 
 
@@ -106,8 +108,39 @@ def json_str_to_obj(json_str: str) -> Any:
     返回值:
         Any: python对象
     """
-    return json.loads(json_str)
+    if isinstance(json_str, str) or isinstance(json_str, bytes):
+        return json.loads(json_str)
+    return json_str
 
+
+def untag(string: str) -> str:
+    """消去标签
+
+    参数:
+        string (str): 含tag字符串
+
+    返回值:
+        str: 无tag字符串
+    """
+    tag_p = re.compile(r'<.*?>')
+    for tag in re.findall(tag_p, string):
+        string = string.replace(tag, '')
+    return string
+
+
+def img_paste(_fp: str, _bp: str, _op: str) -> None:
+    """合并前景图和背景图
+
+    参数:
+        fp (str): 前景图路径
+        bp (str): 背景图路径
+        op (str): 输出图片路径
+    """
+    # return 1
+    f_img = Image.open(_fp)
+    b_img = Image.open(_bp)
+    b_img.paste(f_img, mask=f_img)
+    b_img.save(_op)
 
 async def download_async(
     url: str, headers: dict = None, stringify: bool = False) -> bytes or str or None:

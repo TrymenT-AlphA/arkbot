@@ -1,5 +1,5 @@
 # encoding:utf-8
-"""提供敌方数据的更新和查询
+"""提供干员数据的更新和查询
 """
 import os
 import imgkit
@@ -10,33 +10,33 @@ from nonebot.matcher import Matcher
 from nonebot.params import CommandArg
 from nonebot.permission import SUPERUSER
 from nonebot.rule import to_me
-from .core.ark_enemy import ArkEnemy
+from .core.ark_op import ArkOp
 from .utils import untag
 
 
-EnemyUpdate = on_command(
-    cmd='EnemyUpdate',
+OpUpdate = on_command(
+    cmd='OpUpdate',
     rule=to_me(),
-    aliases={'更新敌方数据'},
+    aliases={'更新干员数据'},
     permission=SUPERUSER)
-@EnemyUpdate.handle()
+@OpUpdate.handle()
 async def _handler(matcher: Matcher) -> None:
-    """更新敌方数据库
+    """更新干员数据库
 
     参数:
         matcher (Matcher): Matcher
     """
-    await matcher.send('开始更新敌方数据库...')
-    await matcher.send(f'更新了{ArkEnemy.update()}条信息')
-    await matcher.send('敌方数据库更新完毕!')
+    await matcher.send('开始更新干员数据库...')
+    await matcher.send(f'更新了{ArkOp.update()}条信息')
+    await matcher.send('干员数据库更新完毕!')
 
-EnemyInfo = on_command(
-    cmd='EnemyInfo',
+OpInfo = on_command(
+    cmd='OpInfo',
     rule=to_me(),
-    aliases={'查询敌方'})
-@EnemyInfo.handle()
+    aliases={'查询干员'})
+@OpInfo.handle()
 async def _handler(matcher: Matcher, args: Message = CommandArg()) -> None:
-    """查询敌方数据
+    """查询干员数据
 
     参数:
         matcher (Matcher): Matcher

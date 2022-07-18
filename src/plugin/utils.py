@@ -23,7 +23,7 @@ def json_to_obj(path: str) -> Any:
         Any: python对象
     """
     with open(path, 'r', encoding='utf8') as  _:
-        return json.load( _)
+        return json.load(_)
 
 
 def obj_to_json(obj: Any, path: str) -> None:

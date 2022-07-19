@@ -68,12 +68,12 @@ class ArkEnemy:
         Returns:
             dict: 地方信息
         """
-        _db = Database()
         keys = (
             'enemyId','enemyIndex','name','enemyRace','enemyLevel','attackType',
             'endure','attack','defence','resistance','description','ability',
             'Value' # *这个是特殊的
         )
+        _db = Database()
         sql = f"""SELECT {','.join([f"`{key}`" for key in keys[:-1]])} FROM `enemy_handbook_table`
             WHERE name LIKE '%{self.name}%'""" # 从enemy_handbook_table查询
         _db.execute(sql)

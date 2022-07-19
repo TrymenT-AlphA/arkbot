@@ -340,27 +340,27 @@
 
     <!-- 普通技能强化表 -->
     <table style="width: 1000px;">
-        <tr class="key"><td class="key" colspan="10">技能升级</td></tr>
+        <tr class="key"><td class="key" colspan="6">技能升级</td></tr>
         {% for each in args['allSkillLvlup']  %}
         <tr>
-            <td class="key" colspan="2">{{ loop.index }} -> {{ loop.index+1 }}</td>
-            <td colspan="8">
+            <td class="key">{{ loop.index }} -> {{ loop.index+1 }}</td>
+            <td colspan="5">
                 {% for m in each['lvlUpCost'] %}
                 <img src="{{ m['pic'] }}">X{{ m['count'] }}
                 {% endfor %}
             </td>
         </tr>
         {% endfor %}
-        <tr class="key"><td class="key" colspan="10">技能专精</td></tr>
+        <tr class="key"><td class="key" colspan="6">技能专精</td></tr>
         {% for i in range(args['skills']|length)  %}
-        {% if args['skills'][i]['levelUpCostCond'] %}
+        {% if each['levelUpCostCond'] %}
         {% for j in range(args['skills'][i]['levelUpCostCond']|length) %}
         <tr>
-            {% if j == 0 %}
-            <td class="key" rowspan="3">{{ i+1 }}技能</td>
+            {% if j == 1 %}
+            <td class="key" rowspan="3">{{ i }}技能</td>
             {% endif %}
-            <td class="key">专精{{ j+1 }}</td>
-            <td colspan="8">
+            <td class="key">专精{{ j }}</td>
+            <td colspan="4">
                 {% for each in args['skills'][i]['levelUpCostCond'][j]['levelUpCost'] %}
                 <img src="{{ each['pic'] }}">X{{ each['count'] }}
                 {% endfor %}

@@ -1,5 +1,7 @@
+# encoding:utf-8
 """明日方舟物品
 """
+import os
 from nonebot.log import logger
 from tqdm import tqdm
 from .data_base import Database
@@ -36,8 +38,9 @@ class ArkItem:
         logger.success("item_table更新完毕!")
         return update_row
 
-    def __init__(self, name=None):
+    def __init__(self, name=None, item_id=None):
         self.name = name
+        self.item_id = item_id
 
     def get_info(self):
         """获取物品信息
@@ -48,11 +51,18 @@ class ArkItem:
             'stackIconId','sortId','usage','obtainApproach','classifyType',
             'itemType', 'stageDropList', 'buildingProductList'
         )
-        sql = f"""SELECT {','.join([f"`{key}`" for key in keys[:-1]])} FROM `item_table`
-            WHERE `name`=%s"""
-        args = obj_to_json_str(self.name)
+        if self.name is not None:
+            sql = f"""SELECT {','.join([f"`{key}`" for key in keys[:-1]])} FROM `item_table`
+                WHERE `name`=%s"""
+            args = obj_to_json_str(self.name)
+        elif self.item_id is not None:
+            sql = f"""SELECT {','.join([f"`{key}`" for key in keys[:-1]])} FROM `item_table`
+                WHERE `itemId`=%s"""
+            args = obj_to_json_str(self.item_id)
         _db.execute(sql, args)
         res = _db.fetchone()
         if res is None: # 没有查到相关数据
             return None
-        return dict(zip(keys, map(json_str_to_obj, res)))
+        res = dict(zip(keys, map(json_str_to_obj, res)))
+        res['pic'] = f"file:///{os.getcwd()}/arksrc/item/{res['iconId']}.png"
+        return res

@@ -7,3 +7,5 @@ from . import bilibili_dynamic
 from . import recruit_advice
 from . import enemy_info
 from . import item_info
+from . import range_info
+from . import op_info

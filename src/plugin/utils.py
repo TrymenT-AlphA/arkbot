@@ -128,6 +128,27 @@ def untag(string: str) -> str:
     return string
 
 
+def bring_in_blackboard(args: dict) -> str:
+    """将blackboard中的值带入description中
+
+    参数:
+        args (dict): 含'description'和'blackboard'的字典
+
+    返回值:
+        str: 带入后的description
+    """
+    res = untag(args['description'])
+    _p = re.compile("{.*?}")
+    for i in re.findall(_p, args['description']):
+        for j in args['blackboard']:
+            if j['key'].upper() in i.upper():
+                if '%' in i:
+                    res = res.replace(i, str(round(j['value']*100, 1))+'%')
+                else:
+                    res = res.replace(i, str(j['value']))
+    return res
+
+
 def img_paste(_fp: str, _bp: str, _op: str) -> None:
     """合并前景图和背景图
 
@@ -141,6 +162,7 @@ def img_paste(_fp: str, _bp: str, _op: str) -> None:
     b_img = Image.open(_bp)
     b_img.paste(f_img, mask=f_img)
     b_img.save(_op)
+
 
 async def download_async(
     url: str, headers: dict = None, stringify: bool = False) -> bytes or str or None:

@@ -1,9 +1,10 @@
+# encoding:utf-8
 """明日方舟干员类
 """
 from nonebot.log import logger
 from tqdm import tqdm
 from .data_base import Database
-from ..utils import json_to_obj, obj_to_json_str
+from ..utils import json_to_obj, obj_to_json_str, json_str_to_obj
 
 
 class ArkOp:
@@ -59,7 +60,35 @@ class ArkOp:
     def __init__(self, name=None):
         self.name = name
 
-    def getinfo(self):
+    def get_info(self) -> dict or None:
         """获取干员信息
         """
-        # do sth.
+        keys = (
+            "name","description","canUseGeneralPotentialItem","potentialItemId",
+            "nationId","groupId","teamId","displayNumber","tokenKey","appellation",
+            "position","tagList","itemUsage","itemDesc","itemObtainApproach",
+            "isNotObtainable","isSpChar","maxPotentialLevel","rarity","profession",
+            "subProfessionId","trait","phases","skills","talents","potentialRanks",
+            "favorKeyFrames","allSkillLvlup"
+        )
+        sql = f"""SELECT {','.join([f"`{key}`" for key in keys])} FROM `character_table`
+            WHERE name LIKE '%{self.name}%'""" # 从enemy_handbook_table查询
+        _db = Database()
+        _db.execute(sql)
+        res = _db.fetchone()
+        if res is None: # 没有查到相关数据
+            return None
+        res = dict(zip(keys, map(json_str_to_obj, res)))
+        keys = (
+            "skillId","iconId","hidden","levels"
+        )
+        for i, _ in enumerate(res['skills']):
+            sql = f"""SELECT {','.join([f"`{key}`" for key in keys])} FROM `skill_table`
+                WHERE skillId=%s"""
+            args = obj_to_json_str(_['skillId'])
+            _db.execute(sql, args)
+            tmp = _db.fetchone()
+            assert tmp is not None
+            tmp = dict(zip(keys, map(json_str_to_obj, tmp)))
+            res['skills'][i]['skillInfo'] = tmp
+        return res

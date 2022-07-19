@@ -11,7 +11,8 @@ from nonebot.params import CommandArg
 from nonebot.permission import SUPERUSER
 from nonebot.rule import to_me
 from .core.ark_item import ArkItem
-from .utils import img_paste, json_to_obj
+# from .utils import img_paste, json_to_obj
+from .utils import json_to_obj
 
 
 ItemUpdate = on_command(
@@ -42,15 +43,16 @@ async def _handler(matcher: Matcher, args: Message = CommandArg()) -> None:
         matcher (Matcher): Matcher
         args (Message, optional): 参数. Defaults to CommandArg().
     """
-    item = ArkItem(args.extract_plain_text())
+    item = ArkItem(name = args.extract_plain_text())
     info = item.get_info()
     if info is None: # 数据库中没有信息,直接返回
         await matcher.finish("数据库中没有物品信息")
     # 找到对应的图片路径
-    item_pic = f"./arksrc/item/{info['iconId']}.png"
-    item_rarity_pic = f"./arksrc/item_rarity_img/sprite_item_r{info['rarity']}.png"
-    img_paste(item_pic, item_rarity_pic, f"./{info['iconId']}.png")
-    info['pic'] = f"file:///{os.getcwd()}/{info['iconId']}.png"
+    # item_pic = f"./arksrc/item/{info['iconId']}.png"
+    # item_rarity_pic = f"./arksrc/item_rarity_img/sprite_item_r{info['rarity']}.png"
+    # img_paste(item_pic, item_rarity_pic, f"./{info['iconId']}.png")
+    # info['pic'] = f"file:///{os.getcwd()}/{info['iconId']}.png"
+    info['pic'] = f"file:///{os.getcwd()}/arksrc/item/{info['iconId']}.png"
     # 计算stage code
     stage_code = json_to_obj('./data/stage_code.json')
     for each in info['stageDropList']:
@@ -68,6 +70,6 @@ async def _handler(matcher: Matcher, args: Message = CommandArg()) -> None:
     with open('item_info.html', 'r', encoding='utf8') as _:
         imgkit.from_file(_, 'item_info.jpg', options=options)
     await matcher.send(MessageSegment.image(f"file:///{os.getcwd()}/item_info.jpg"))
-    os.remove(f"{info['iconId']}.png")
+    # os.remove(f"{info['iconId']}.png")
     os.remove('item_info.html')
     os.remove('item_info.jpg')

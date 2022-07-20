@@ -50,6 +50,7 @@ async def _handler(matcher: Matcher, args: Message = CommandArg()) -> None:
     if info is None: # 数据库中没有信息,直接返回
         await matcher.finish("数据库中没有干员信息")
     # 找到对应的图片路径
+    info['cssPath'] = f"file:///{os.getcwd()}/data/style.css"
     info['pic'] = \
         f"file:///{os.getcwd()}/arksrc/avatar/{info['phases'][0]['characterPrefabKey']}.png"
     try:
@@ -108,19 +109,18 @@ async def _handler(matcher: Matcher, args: Message = CommandArg()) -> None:
                         ArkItem(item_id=_k['id']).get_info()['pic']
     except TypeError:
         ...
-    # obj_to_json(info, 'temp.json')
     # 根据jinja模板生成图片
     env = jinja2.Environment(loader=jinja2.FileSystemLoader('data/'))
-    temp = env.get_template('./op_info.jinja')
+    temp = env.get_template('op_info.jinja') # data/op_info.jinja
     html = temp.render(args = info)
-    with open('op_info.html', 'w', encoding='utf8') as _:
+    with open('data/op_info.html', 'w', encoding='utf8') as _:
         _.write(html)
     options = {
         'width': 1020,
         "enable-local-file-access": None
     }
-    with open('op_info.html', 'r', encoding='utf8') as _:
-        imgkit.from_file(_, 'op_info.jpg', options=options)
-    await matcher.send(MessageSegment.image(f"file:///{os.getcwd()}/op_info.jpg"))
-    os.remove('op_info.html')
-    os.remove('op_info.jpg')
+    with open('data/op_info.html', 'r', encoding='utf8') as _:
+        imgkit.from_file(_, 'data/op_info.jpg', options=options)
+    await matcher.send(MessageSegment.image(f"file:///{os.getcwd()}/data/op_info.jpg"))
+    os.remove('data/op_info.html')
+    os.remove('data/op_info.jpg')

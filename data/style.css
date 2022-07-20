@@ -1,0 +1,36 @@
+* {
+    font-family: '霞鹜文楷';
+}
+
+p {
+    font-size: 150%;
+    font-weight: bold;
+}
+
+table{
+    width: 1000px;
+    table-layout: fixed;
+    text-align: center;
+    border-radius: 5px;
+    border-spacing: 0;
+    box-shadow: 1px 1px 1px 0px #ccc;
+}
+
+td {
+    text-align: center;
+    border-right: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+}
+
+td:last-child {
+    border-right: 0;
+}
+
+tr:last-child td{
+    border-bottom: 0;
+}
+
+.key{
+    font-weight: bold;
+    background-color: rgba(235, 235, 235, 0.5);
+}

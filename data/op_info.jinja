@@ -4,49 +4,16 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ args['name'] }}</title>
+    <title></title>
 </head>
 
-<style>
-    * {
-        font-family: '霞鹜文楷';
-    }
-    p {
-        font-size: 150%;
-        font-weight: bold;
-    }
-    table{
-        table-layout: fixed;
-        text-align: center;
-        border-radius: 5px;
-        border-spacing: 0;
-        box-shadow: 1px 1px 1px 0px #ccc;
-    }
-    td {
-        text-align: center;
-        border-right: 1px solid #ccc;
-        border-bottom: 1px solid #ccc;
-    }
-    td:last-child {
-        border-right: 0;
-    }
-    tr:last-child td{
-        border-bottom: 0;
-    }
-    .key{
-        font-weight: bold;
-        background-color: rgba(235, 235, 235, 0.5);
-    }
-</style>
+<link rel="stylesheet" href="{{ args['cssPath'] }}">
 
 <body>
-    <!-- 干员基本信息表 -->
-    <table style="width: 1000px;">
+    <table>
         <tr>
             <td colspan="3" style="background-color: pink; color: white">
-            {% with tmp = args['name'] + ' ' + (args['rarity']+1)*'★' %}
-            {{ tmp }}
-            {% endwith %}
+            {% with tmp = args['name'] + ' ' + (args['rarity']+1)*'★' %}{{ tmp }}{% endwith %}
             </td>
         </tr>
         <tr>
@@ -64,9 +31,7 @@
             <td class="key" colspan="2">分支特性</td>
         </tr>
         <tr>
-            <td colspan="2" rowspan="2">
-            {{ args['description'] }}
-            </td>
+            <td colspan="2" rowspan="2">{{ args['description'] }}</td>
         </tr>
         <tr>
         </tr>
@@ -77,16 +42,17 @@
             <td colspan="3">{{ args['tagList'] }}</td>
         </tr>
     </table>
-
     <p style="text-align: bottom;">属性</p>
-
-    <!-- 干员属性表 -->
-    <table style="width: 1000px;">
+    <table>
         <tr>
             <td class="key">再部署时间</td>
             <td>{{ args['phases'][0]['attributesKeyFrames'][0]['data']['respawnTime'] }}s</td>
             <td class="key">初始部署费用</td>
-            <td>{{ args['phases'][0]['attributesKeyFrames'][0]['data']['cost'] }} → {{ args['phases'][-1]['attributesKeyFrames'][0]['data']['cost'] }}</td>
+            <td>
+                {{ args['phases'][0]['attributesKeyFrames'][0]['data']['cost'] }}
+                →
+                {{ args['phases'][-1]['attributesKeyFrames'][0]['data']['cost'] }}
+            </td>
         </tr>
         <tr>
             <td class="key">阻挡数</td>
@@ -95,11 +61,8 @@
             <td>{{ args['phases'][0]['attributesKeyFrames'][0]['data']['baseAttackTime'] }}s</td>
         </tr>
     </table>
-
-    <br> <!-- 空行 -->
-
-    <!-- 干员数值表 -->
-    <table style="width: 1000px;">
+    <br>
+    <table>
         <tr>
             <td class="key"></td>
             <td class="key">精英0 1级</td>
@@ -113,12 +76,8 @@
         <tr>
             <td class="key">生命上限</td>
             {% for each in args['phases'] %}
-            <td>
-                {{ each['attributesKeyFrames'][0]['data']['maxHp'] }}
-            </td>
-            <td>
-                {{ each['attributesKeyFrames'][1]['data']['maxHp'] }}
-            </td>
+            <td>{{ each['attributesKeyFrames'][0]['data']['maxHp'] }}</td>
+            <td>{{ each['attributesKeyFrames'][1]['data']['maxHp'] }}</td>
             {% endfor %}
             {% for i in range(args['phases']|length, 3) %}
             <td> - </td>
@@ -133,12 +92,8 @@
         <tr>
             <td class="key">攻击</td>
             {% for each in args['phases'] %}
-            <td>
-                {{ each['attributesKeyFrames'][0]['data']['atk'] }}
-            </td>
-            <td>
-                {{ each['attributesKeyFrames'][1]['data']['atk'] }}
-            </td>
+            <td>{{ each['attributesKeyFrames'][0]['data']['atk'] }}</td>
+            <td>{{ each['attributesKeyFrames'][1]['data']['atk'] }}</td>
             {% endfor %}
             {% for i in range(args['phases']|length, 3) %}
             <td> - </td>
@@ -153,12 +108,8 @@
         <tr>
             <td class="key">防御</td>
             {% for each in args['phases'] %}
-            <td>
-                {{ each['attributesKeyFrames'][0]['data']['def'] }}
-            </td>
-            <td>
-                {{ each['attributesKeyFrames'][1]['data']['def'] }}
-            </td>
+            <td>{{ each['attributesKeyFrames'][0]['data']['def'] }}</td>
+            <td>{{ each['attributesKeyFrames'][1]['data']['def'] }}</td>
             {% endfor %}
             {% for i in range(args['phases']|length, 3) %}
             <td> - </td>
@@ -187,10 +138,8 @@
             {% endif %}
         </tr>
     </table>
-
-    <!-- 攻击范围表 -->
     <p style="text-align: bottom;">攻击范围</p>
-    <table style="width: 1000px;">
+    <table>
         <tr>
             <td class="key">精英0</td>
             <td class="key">精英1</td>
@@ -222,11 +171,8 @@
             {% endfor %}
         </tr>
     </table>
-
     <p style="text-align: bottom;">天赋</p>
-
-    <!-- 干员天赋表 -->
-    <table style="width: 1000px;">
+    <table>
         <tr>
             <td class="key">天赋</td>
             <td class="key">名称</td>
@@ -237,28 +183,21 @@
         {% for j in range(args['talents'][i]['candidates']|length) %}
         <tr>
             {% if j == 0 %}
-            <td rowspan="{{ args['talents'][i]['candidates']|length }}">
-                第{{ i+1 }}天赋
-            </td>
+            <td rowspan="{{ args['talents'][i]['candidates']|length }}">第{{ i+1 }}天赋</td>
             {% endif %}
+            <td>{{  args['talents'][i]['candidates'][j]['name']  }}</td>
             <td>
-                {{  args['talents'][i]['candidates'][j]['name']  }}
+                精英{{ args['talents'][i]['candidates'][j]['unlockCondition']['phase'] }}
+                &nbsp;
+                潜能{{ args['talents'][i]['candidates'][j]['requiredPotentialRank'] }}
             </td>
-            <td>
-                精英{{ args['talents'][i]['candidates'][j]['unlockCondition']['phase'] }} 潜能{{ args['talents'][i]['candidates'][j]['requiredPotentialRank'] }}
-            </td>
-            <td colspan="3">
-                {{ args['talents'][i]['candidates'][j]['description'] }}
-            </td>
+            <td colspan="3">{{ args['talents'][i]['candidates'][j]['description'] }}</td>
         </tr>
         {% endfor %}
         {% endfor %}
     </table>
-
     <p style="text-align: bottom;">潜能提升</p>
-
-    <!-- 干员潜能表 -->
-    <table style="width: 1000px;">
+    <table>
         <tr>
             <td class="key">潜能2</td>
             <td class="key">潜能3</td>
@@ -282,12 +221,9 @@
             {% endif %}
         </tr>
     </table>
-
     <p style="text-align: bottom;">技能</p>
-
-    <!-- 干员技能表 -->
     {% for skill in args['skills'] %}
-    <table style="width: 1000px;">
+    <table>
         <tr>
             <td colspan="2"><img src="{{ skill['skillPic'] }}"></td>
             <td colspan="8">{{ skill['skillInfo']['levels'][0]['name'] }}</td>
@@ -324,32 +260,21 @@
             {% elif loop.index == 10 %}
             <td colspan="2">Rank Ⅲ</td>
             {% endif %}
-            <td colspan="10">
-                {{ lvl['description'] }}
-            </td>
-            <td>
-                {{ lvl['spData']['initSp'] }}
-            </td>
-            <td>
-                {{ lvl['spData']['spCost'] }}
-            </td>
-            <td>
-                {{ lvl['duration'] }}
-            </td>
+            <td colspan="10">{{ lvl['description'] }}</td>
+            <td>{{ lvl['spData']['initSp'] }}</td>
+            <td>{{ lvl['spData']['spCost'] }}</td>
+            <td>{{ lvl['duration'] }}</td>
         </tr>
         {% endfor %}
     </table>
     <br>
     {% endfor %}
-
     <p style="text-align: bottom;">精英化材料</p>
-
-    <!-- 精英化材料表 -->
-    <table style="width: 1000px;">
+    <table>
         {% for each in args['phases'] %}
         {% if each['evolveCost'] %}
         <tr>
-            <td class="key">精英{{ loop.index0-1 }} -> 精英{{ loop.index0 }}</td>
+            <td class="key">精英{{ loop.index0-1 }}&nbsp;->&nbsp;精英{{ loop.index0 }}</td>
             <td colspan="5">
                 {% for m in each['evolveCost'] %}
                 <img src="{{ m['pic'] }}">X{{ m['count'] }}
@@ -359,11 +284,8 @@
         {% endif %}
         {% endfor %}
     </table>
-
     <p style="text-align: bottom;">技能升级材料</p>
-
-    <!-- 普通技能强化表 -->
-    <table style="width: 1000px;">
+    <table>
         <tr class="key"><td class="key" colspan="10">技能升级</td></tr>
         {% if args['allSkillLvlup'] %}
         {% for each in args['allSkillLvlup']  %}

@@ -4,40 +4,10 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ args['name'] }}</title>
+    <title></title>
 </head>
 
-<style>
-    * {
-        font-family: '霞鹜文楷';
-    }
-    p {
-        font-size: 150%;
-        font-weight: bold;
-    }
-    table{
-        table-layout: fixed;
-        text-align: center;
-        border-radius: 5px;
-        border-spacing: 0;
-        box-shadow: 1px 1px 1px 0px #ccc;
-    }
-    td {
-        text-align: center;
-        border-right: 1px solid #ccc;
-        border-bottom: 1px solid #ccc;
-    }
-    td:last-child {
-        border-right: 0;
-    }
-    tr:last-child td{
-        border-bottom: 0;
-    }
-    .key{
-        font-weight: bold;
-        background-color: rgba(235, 235, 235, 0.5);
-    }
-</style>
+<link rel="stylesheet" href="{{ args['cssPath'] }}">
 
 <body>
     <table>
@@ -45,9 +15,7 @@
             <td colspan="2" style="background-color: pink; color: white">{{ args['name'] }}</td>
         </tr>
         <tr>
-            <th rowspan="4">
-                <img src="{{ args['pic'] }}">
-            </th>
+            <td rowspan="4"><img src="{{ args['pic'] }}"></td>
             <td class="key">用途</td>
         </tr>
         <tr>
@@ -64,7 +32,7 @@
         </tr>
         {% if args['stageDropList']|length == 0 %}
         <tr>
-            <td colspan="2">-</td>
+            <td colspan="2"> - </td>
         </tr>
         {% else %}
         {% for v in args['stageDropList'] %}

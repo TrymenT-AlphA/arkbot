@@ -47,6 +47,7 @@ async def _handler(matcher: Matcher, args: Message = CommandArg()) -> None:
     if info is None: # 数据库中没有信息,直接返回
         await matcher.finish("数据库中没有敌方信息")
     # 找到对应的图片路径
+    info['cssPath'] = f"file:///{os.getcwd()}/data/style.css"
     info['pic'] = f"file:///{os.getcwd()}/arksrc/enemy/{info['enemyId']}.png"
     try:
         info['description'] = untag(info['description'])
@@ -73,16 +74,16 @@ async def _handler(matcher: Matcher, args: Message = CommandArg()) -> None:
                         level_i['enemyData'][_k][_kk] = level_0['enemyData'][_k][_kk]
     # 根据jinja模板生成图片
     env = jinja2.Environment(loader=jinja2.FileSystemLoader('data/'))
-    temp = env.get_template('./enemy_info.jinja')
+    temp = env.get_template('enemy_info.jinja') # data/enemy_info.jinja
     html = temp.render(args = info)
-    with open('enemy_info.html', 'w', encoding='utf8') as _:
+    with open('data/enemy_info.html', 'w', encoding='utf8') as _:
         _.write(html)
     options = {
-        'width': 820,
+        'width': 1020,
         "enable-local-file-access": None
     }
-    with open('enemy_info.html', 'r', encoding='utf8') as _:
-        imgkit.from_file(_, 'enemy_info.jpg', options=options)
-    await matcher.send(MessageSegment.image(f"file:///{os.getcwd()}/enemy_info.jpg"))
-    os.remove('enemy_info.html')
-    os.remove('enemy_info.jpg')
+    with open('data/enemy_info.html', 'r', encoding='utf8') as _:
+        imgkit.from_file(_, 'data/enemy_info.jpg', options=options)
+    await matcher.send(MessageSegment.image(f"file:///{os.getcwd()}/data/enemy_info.jpg"))
+    os.remove('data/enemy_info.html')
+    os.remove('data/enemy_info.jpg')

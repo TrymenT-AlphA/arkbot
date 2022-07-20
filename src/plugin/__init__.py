@@ -9,3 +9,4 @@ from . import enemy_info
 from . import item_info
 from . import range_info
 from . import op_info
+from . import initialize

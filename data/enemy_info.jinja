@@ -5,55 +5,19 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{  args['name']  }}</title>
+    <title></title>
 </head>
 
-<style>
-    * {
-        font-family: '霞鹜文楷';
-    }
-    p {
-        font-size: 150%;
-        font-weight: bold;
-    }
-    table{
-        table-layout: fixed;
-        text-align: center;
-        border-radius: 5px;
-        border-spacing: 0;
-        box-shadow: 1px 1px 1px 0px #ccc;
-    }
-    td {
-        text-align: center;
-        border-right: 1px solid #ccc;
-        border-bottom: 1px solid #ccc;
-    }
-    td:last-child {
-        border-right: 0;
-    }
-    tr:last-child td{
-        border-bottom: 0;
-    }
-    .key{
-        font-weight: bold;
-        background-color: rgba(235, 235, 235, 0.5);
-    }
-</style>
+<link rel="stylesheet" href="{{ args['cssPath'] }}">
 
 <body>
-    <table width="800px">
+    <table>
         <tr class="key">
-            <td colspan="4">
-                {{ args['name'] }}
-            </td>
+            <td colspan="4">{{ args['name'] }}</td>
         </tr>
         <tr>
-            <td>
-                <img src="{{ args['pic'] }}">
-            </td>
-            <td colspan="3">
-                {{ args['description'] }}
-            </td>
+            <td><img src="{{ args['pic'] }}"></td>
+            <td colspan="3">{{ args['description'] }}</td>
         </tr>
         <tr class="key">
             <td>种类</td>
@@ -108,7 +72,7 @@
     </table>
     {% for v in args['Value'] %}
     <p style="text-align: bottom;">level {{ loop.index0 }}</p>
-    <table width="800px">
+    <table>
         <tr class="key">
             <td colspan="5">描述</td>
         </tr>
@@ -206,10 +170,7 @@
             </td>
         </tr>
         <tr class="key">
-            <td colspan="5">
-                <i class="fa-shield-alt fas"></i>
-                异常状态抗性
-            </td>
+            <td colspan="5"><i class="fa-shield-alt fas"></i>异常状态抗性</td>
         </tr>
         <tr class="key">
             <td>沉默抗性</td>

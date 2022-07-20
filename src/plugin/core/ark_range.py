@@ -40,7 +40,7 @@ class ArkRange:
         logger.success("range_table更新完毕!")
         return update_row
 
-    def __init__(self, _id: str) -> None:
+    def __init__(self, _id: str = None) -> None:
         self._id = _id
 
     def get_html(self) -> str or None:
@@ -56,7 +56,7 @@ class ArkRange:
         _db.execute(sql, args)
         res = _db.fetchone()
         if res is None:
-            return
+            return None
         res = json_str_to_obj(res[0])
         coordinates = []
         min_row, min_col = 0, 0

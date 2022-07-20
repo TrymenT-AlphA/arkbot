@@ -14,7 +14,7 @@ from nonebot.rule import to_me
 from .core.ark_item import ArkItem
 from .core.ark_op import ArkOp
 from .core.ark_range import ArkRange
-from .utils import bring_in_blackboard, untag, obj_to_json
+from .utils import bring_in_blackboard, untag
 
 
 OpUpdate = on_command(

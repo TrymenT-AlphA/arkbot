@@ -57,16 +57,20 @@ async def _handler(matcher: Matcher, args: Message = CommandArg()) -> None:
     except KeyError:
         ... # 忽略
     # 处理tagList
-    info['tagList'] = ','.join(info['tagList'])
+    if info['tagList'] is not None:
+        info['tagList'] = ','.join(info['tagList'])
     # 处理职业信息，pass
     # 处理攻击范围信息
     for i, _ in enumerate(info['phases']):
         info['phases'][i]['range'] = ArkRange(_['rangeId']).get_html()
     # 处理天赋信息
-    for i, _i in enumerate(info['talents']):
-        for j, _j in enumerate(_i['candidates']):
-            info['talents'][i]['candidates'][j]['description'] = \
-                bring_in_blackboard(info['talents'][i]['candidates'][j]).replace('\\n', '</br>')
+    try:
+        for i, _i in enumerate(info['talents']):
+            for j, _j in enumerate(_i['candidates']):
+                info['talents'][i]['candidates'][j]['description'] = \
+                    bring_in_blackboard(info['talents'][i]['candidates'][j]).replace('\\n', '</br>')
+    except TypeError:
+        ...
     # 处理技能信息
     for i, _i in enumerate(info['skills']):
         if _i['skillInfo']['iconId'] is None:
@@ -88,16 +92,22 @@ async def _handler(matcher: Matcher, args: Message = CommandArg()) -> None:
                 info['phases'][i]['evolveCost'][j]['pic'] = \
                     ArkItem(item_id=_j['id']).get_info()['pic']
     # 处理技能升级表
-    for i, _i in enumerate(info['allSkillLvlup']):
-        for j, _j in enumerate(_i['lvlUpCost']):
-            info['allSkillLvlup'][i]['lvlUpCost'][j]['pic'] = \
-                ArkItem(item_id=_j['id']).get_info()['pic']
+    try:
+        for i, _i in enumerate(info['allSkillLvlup']):
+            for j, _j in enumerate(_i['lvlUpCost']):
+                info['allSkillLvlup'][i]['lvlUpCost'][j]['pic'] = \
+                    ArkItem(item_id=_j['id']).get_info()['pic']
+    except TypeError:
+        ...
     # 处理技能专精表
-    for i, _i in enumerate(info['skills']):
-        for j, _j in enumerate(_i['levelUpCostCond']):
-            for k, _k in enumerate(_j['levelUpCost']):
-                info['skills'][i]['levelUpCostCond'][j]['levelUpCost'][k]['pic'] = \
-                    ArkItem(item_id=_k['id']).get_info()['pic']
+    try:
+        for i, _i in enumerate(info['skills']):
+            for j, _j in enumerate(_i['levelUpCostCond']):
+                for k, _k in enumerate(_j['levelUpCost']):
+                    info['skills'][i]['levelUpCostCond'][j]['levelUpCost'][k]['pic'] = \
+                        ArkItem(item_id=_k['id']).get_info()['pic']
+    except TypeError:
+        ...
     # obj_to_json(info, 'temp.json')
     # 根据jinja模板生成图片
     env = jinja2.Environment(loader=jinja2.FileSystemLoader('data/'))

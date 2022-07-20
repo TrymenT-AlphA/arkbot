@@ -55,9 +55,7 @@
         </tr>
         <tr>
             <td colspan="2" rowspan="2">
-            {% with tmp = args['profession'] + ' ' + args['subProfessionId'] %}
-            {{ tmp }}
-            {% endwith %}
+            {% with tmp = args['profession'] + ' ' + args['subProfessionId'] %}{{ tmp }}{% endwith %}
             </td>
         </tr>
         <tr>
@@ -66,7 +64,9 @@
             <td class="key" colspan="2">分支特性</td>
         </tr>
         <tr>
-            <td colspan="2" rowspan="2">{{ args['description'] }}</td>
+            <td colspan="2" rowspan="2">
+            {{ args['description'] }}
+            </td>
         </tr>
         <tr>
         </tr>
@@ -124,7 +124,11 @@
             <td> - </td>
             <td> - </td>
             {% endfor %}
+            {% if args['favorKeyFrames'] %}
             <td>{{ args['favorKeyFrames'][-1]['data']['maxHp'] }}</td>
+            {% else %}
+            <td> - </td>
+            {% endif %}
         </tr>
         <tr>
             <td class="key">攻击</td>
@@ -140,7 +144,11 @@
             <td> - </td>
             <td> - </td>
             {% endfor %}
+            {% if args['favorKeyFrames'] %}
             <td>{{ args['favorKeyFrames'][-1]['data']['atk'] }}</td>
+            {% else %}
+            <td> - </td>
+            {% endif %}
         </tr>
         <tr>
             <td class="key">防御</td>
@@ -156,7 +164,11 @@
             <td> - </td>
             <td> - </td>
             {% endfor %}
+            {% if args['favorKeyFrames'] %}
             <td>{{ args['favorKeyFrames'][-1]['data']['def'] }}</td>
+            {% else %}
+            <td> - </td>
+            {% endif %}
         </tr>
         <tr>
             <td class="key">法术抗性</td>
@@ -168,7 +180,11 @@
             <td> - </td>
             <td> - </td>
             {% endfor %}
+            {% if args['favorKeyFrames'] %}
             <td>{{ args['favorKeyFrames'][-1]['data']['magicResistance'] }}</td>
+            {% else %}
+            <td> - </td>
+            {% endif %}
         </tr>
     </table>
 
@@ -229,7 +245,7 @@
                 {{  args['talents'][i]['candidates'][j]['name']  }}
             </td>
             <td>
-                精英{{ args['talents'][i]['candidates'][j]['unlockCondition']['phases'] }} 潜能{{ args['talents'][i]['candidates'][j]['requiredPotentialRank'] }}
+                精英{{ args['talents'][i]['candidates'][j]['unlockCondition']['phase'] }} 潜能{{ args['talents'][i]['candidates'][j]['requiredPotentialRank'] }}
             </td>
             <td colspan="3">
                 {{ args['talents'][i]['candidates'][j]['description'] }}
@@ -251,11 +267,19 @@
             <td class="key">潜能6</td>
         </tr>
         <tr>
+            {% if args['potentialRanks'] %}
             <td>{{  args['potentialRanks'][0]['description']  }}</td>
             <td>{{  args['potentialRanks'][1]['description']  }}</td>
             <td>{{  args['potentialRanks'][2]['description']  }}</td>
             <td>{{  args['potentialRanks'][3]['description']  }}</td>
             <td>{{  args['potentialRanks'][4]['description']  }}</td>
+            {% else %}
+            <td> - </td>
+            <td> - </td>
+            <td> - </td>
+            <td> - </td>
+            <td> - </td>
+            {% endif %}
         </tr>
     </table>
 
@@ -341,17 +365,22 @@
     <!-- 普通技能强化表 -->
     <table style="width: 1000px;">
         <tr class="key"><td class="key" colspan="10">技能升级</td></tr>
+        {% if args['allSkillLvlup'] %}
         {% for each in args['allSkillLvlup']  %}
         <tr>
             <td class="key" colspan="2">{{ loop.index }} -> {{ loop.index+1 }}</td>
             <td colspan="8">
+                {% if each['lvlUpCost'] %}
                 {% for m in each['lvlUpCost'] %}
                 <img src="{{ m['pic'] }}">X{{ m['count'] }}
                 {% endfor %}
+                {% endif %}
             </td>
         </tr>
         {% endfor %}
+        {% endif %}
         <tr class="key"><td class="key" colspan="10">技能专精</td></tr>
+        {% if args['skills'] %}
         {% for i in range(args['skills']|length)  %}
         {% if args['skills'][i]['levelUpCostCond'] %}
         {% for j in range(args['skills'][i]['levelUpCostCond']|length) %}
@@ -361,14 +390,17 @@
             {% endif %}
             <td class="key">专精{{ j+1 }}</td>
             <td colspan="8">
+                {% if args['skills'][i]['levelUpCostCond'][j]['levelUpCost'] %}
                 {% for each in args['skills'][i]['levelUpCostCond'][j]['levelUpCost'] %}
                 <img src="{{ each['pic'] }}">X{{ each['count'] }}
                 {% endfor %}
+                {% endif %}
             </td>
         </tr>
         {% endfor %}
         {% endif %}
         {% endfor %}
+        {% endif %}
     </table>
 </body>
 

@@ -1,11 +1,13 @@
-# encoding:utf-8
 """实用工具集
 1. 提供python对象,json文件,yaml文件的相互转换
 2. 提供异步url下载
 """
-from typing import Any
+from typing import Any, Optional
+import jinja2
 import re
+import os
 import json
+import imgkit
 import yaml
 from aiohttp import ClientSession
 from fake_useragent import UserAgent
@@ -22,24 +24,24 @@ def json_to_obj(path: str) -> Any:
     返回值:
         Any: python对象
     """
-    with open(path, 'r', encoding='utf8') as  _:
+    with open(path, 'r', encoding='utf8') as _:
         return json.load(_)
 
 
 def obj_to_json(obj: Any, path: str) -> None:
-    """传入一个pyhton对象,并写入json文件保存
+    """传入一个python对象,并写入json文件保存
 
     参数:
         obj (Any): python对象
         path (str): 文件路径
     """
-    with open(path, 'w', encoding='utf8') as  _:
-        json.dump(obj,  _, ensure_ascii=False)
+    with open(path, 'w', encoding='utf8') as _:
+        json.dump(obj, _, ensure_ascii=False)
 
 
 # yaml文件与python对象的转换
 def yaml_to_obj(path: str) -> Any:
-    """读取yaml文件,并返回一个pyhton对象
+    """读取yaml文件,并返回一个python对象
 
 
     参数:
@@ -53,7 +55,7 @@ def yaml_to_obj(path: str) -> Any:
 
 
 def obj_to_yaml(obj: Any, path: str) -> None:
-    """传入一个pyhton对象,并写入yaml文件保存
+    """传入一个python对象,并写入yaml文件保存
 
     参数:
         obj (Any): python对象
@@ -132,7 +134,7 @@ def bring_in_blackboard(args: dict) -> str:
     """将blackboard中的值带入description中
 
     参数:
-        args (dict): 含'description'和'blackboard'的字典
+        args (dict): 含description和blackboard的字典
 
     返回值:
         str: 带入后的description
@@ -143,7 +145,7 @@ def bring_in_blackboard(args: dict) -> str:
         for j in args['blackboard']:
             if j['key'].upper() in i.upper():
                 if '%' in i:
-                    res = res.replace(i, str(round(j['value']*100, 1))+'%')
+                    res = res.replace(i, str(round(j['value'] * 100, 1)) + '%')
                 else:
                     res = res.replace(i, str(j['value']))
     return res
@@ -165,7 +167,7 @@ def img_paste(_fp: str, _bp: str, _op: str) -> None:
 
 
 async def download_async(
-    url: str, headers: dict = None, stringify: bool = False) -> bytes or str or None:
+        url: str, headers: Optional[dict] = None, stringify: bool = False) -> bytes or str or None:
     """异步下载url
 
     参数:
@@ -179,10 +181,31 @@ async def download_async(
     default_headers = {
         'User-Agent': UserAgent().chrome
     }
-    hdr = headers or default_headers # 实际请求头
+    hdr = headers or default_headers
     async with ClientSession() as sess:
         async with sess.get(url, headers=hdr) as resp:
             if resp.status == 200:
                 if stringify:
                     return await resp.text()
                 return await resp.read()
+
+
+def render_jinja(template_name: str, args: Optional[dict] = None, options: Optional[dict] = None) -> None:
+    """根据模板生成页面并渲染成图片
+
+    参数:
+        template_name (str): 模板名称
+        info (Any): 模板参数
+    """
+    env = jinja2.Environment(loader=jinja2.FileSystemLoader('data/'))
+    temp = env.get_template(f'{template_name}.jinja')
+    html = temp.render(args=args)
+    with open(f'data/{template_name}.html', 'w', encoding='utf8') as _:
+        _.write(html)
+    default_options = {
+        'width': 1020,
+        "enable-local-file-access": None
+    }
+    with open(f'data/{template_name}.html', 'r', encoding='utf8') as _:
+        imgkit.from_file(_, f'data/{template_name}.jpg', options=options or default_options)
+    os.remove(f'data/{template_name}.html')

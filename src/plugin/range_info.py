@@ -1,4 +1,3 @@
-# encoding:utf-8
 """提供攻击范围的更新
 """
 from nonebot import on_command
@@ -7,12 +6,13 @@ from nonebot.permission import SUPERUSER
 from nonebot.rule import to_me
 from .core.ark_range import ArkRange
 
-
 RangeUpdate = on_command(
     cmd='RangeUpdate',
     rule=to_me(),
     aliases={'更新攻击范围数据'},
     permission=SUPERUSER)
+
+
 @RangeUpdate.handle()
 async def _handler(matcher: Matcher) -> None:
     """更新攻击范围数据库

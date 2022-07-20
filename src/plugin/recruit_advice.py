@@ -1,4 +1,3 @@
-# encoding:utf-8
 """公开招募
 """
 from nonebot import on_command
@@ -9,11 +8,12 @@ from nonebot.rule import to_me
 from nonebot.typing import T_State
 from .core.ark_recruit import ArkRecruit
 
-
 RecruitAdvice = on_command(
     cmd='recruit',
     rule=to_me(),
     aliases={"公开招募"})
+
+
 @RecruitAdvice.handle()
 async def _handler(matcher: Matcher, args: Message = CommandArg()) -> None:
     """如果首次带参就直接设置参数
@@ -24,6 +24,8 @@ async def _handler(matcher: Matcher, args: Message = CommandArg()) -> None:
     """
     if len(args) > 0:
         matcher.set_arg('recruit_args', args)
+
+
 @RecruitAdvice.got('recruit_args', prompt='请博士发送公招截图')
 async def _gotter(state: T_State) -> None:
     """获取公招建议
@@ -51,7 +53,7 @@ async def _gotter(state: T_State) -> None:
             if i != 0:
                 message += Message('\n')
             if len(each) > 0:
-                message += Message(f"图{i+1}公招：\n" + each[0:-1])
+                message += Message(f"图{i + 1}公招：\n" + each[0:-1])
             else:
-                message += Message(f"图{i+1}公招：\n" + '都是垃圾tag呢')
+                message += Message(f"图{i + 1}公招：\n" + '都是垃圾tag呢')
         await RecruitAdvice.finish(message)

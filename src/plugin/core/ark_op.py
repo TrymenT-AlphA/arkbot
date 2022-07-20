@@ -1,8 +1,9 @@
-# encoding:utf-8
 """明日方舟干员类
 """
-from nonebot.log import logger
+from typing import Optional
+import os
 from tqdm import tqdm
+from nonebot.log import logger
 from .data_base import Database
 from ..utils import json_to_obj, obj_to_json_str, json_str_to_obj
 
@@ -10,85 +11,111 @@ from ..utils import json_to_obj, obj_to_json_str, json_str_to_obj
 class ArkOp:
     """明日方舟干员
     """
+
     @staticmethod
     def update():
         """更新干员数据库
         """
         _db = Database()
+        update_row = 0
         # 1. 更新 character_table.json
-        logger.success("开始更新character_table")
-        character_table = "./arksrc/gamedata/excel/character_table.json"
-        info = json_to_obj(character_table)
-        update_row = 0
-        for _id, _ in tqdm(info.items()):
-            sql = """SELECT `name` FROM `character_table`
-                WHERE `name`=%s""" # 尝试查询一条数据
-            args = obj_to_json_str(_['name'])
+        logger.success('开始更新character_table')
+        info = json_to_obj('./arksrc/gamedata/excel/character_table.json')
+        for _key, _val in tqdm(info.items()):
+            sql = """SELECT `name` FROM `character_table` WHERE `name`=%s"""
+            args = obj_to_json_str(_val['name'])
             _db.execute(sql, args)
             if _db.fetchone() is not None:
-                continue # 条目已存在,直接跳过
-            update_row += 1
-            keys, values = zip(*_.items())
+                continue
+            keys, values = zip(*_val.items())
             sql = f"""INSERT INTO `character_table`
-                ({','.join([f"`{key}`" for key in keys])})
-                VALUES ({','.join(['%s']*len(values))})"""
+                ({','.join([f"`{_}`" for _ in keys])})
+                VALUES ({','.join(['%s'] * len(values))})
+                """
             args = tuple(map(obj_to_json_str, values))
             _db.execute(sql, args)
-        logger.success("character_table更新完毕!")
+            update_row += 1
+        logger.success('character_table更新完毕!')
         # 1. 更新 skill_table.json
-        logger.success("开始更新skill_table")
-        skill_table = "./arksrc/gamedata/excel/skill_table.json"
-        info = json_to_obj(skill_table)
-        update_row = 0
-        for _id, _ in tqdm(info.items()):
-            sql = """SELECT `skillId` FROM `skill_table`
-                WHERE `skillId`=%s""" # 尝试查询一条数据
-            args = obj_to_json_str(_id)
+        logger.success('开始更新skill_table')
+        info = json_to_obj('./arksrc/gamedata/excel/skill_table.json')
+        for _key, _val in tqdm(info.items()):
+            sql = """SELECT `skillId` FROM `skill_table` WHERE `skillId`=%s"""
+            args = obj_to_json_str(_key)
             _db.execute(sql, args)
             if _db.fetchone() is not None:
-                continue # 条目已存在,直接跳过
-            update_row += 1
-            keys, values = zip(*_.items())
+                continue
+            keys, values = zip(*_val.items())
             sql = f"""INSERT INTO `skill_table`
-                ({','.join([f"`{key}`" for key in keys])})
-                VALUES ({','.join(['%s']*len(values))})"""
+                ({','.join([f"`{_}`" for _ in keys])})
+                VALUES ({','.join(['%s'] * len(values))})
+                """
             args = tuple(map(obj_to_json_str, values))
             _db.execute(sql, args)
-        logger.success("skill_table更新完毕!")
+            update_row += 1
+        logger.success('skill_table更新完毕!')
         return update_row
 
     def __init__(self, name=None):
         self.name = name
 
-    def get_info(self) -> dict or None:
+    def get_info(self) -> Optional[dict]:
         """获取干员信息
         """
         keys = (
-            "name","description","canUseGeneralPotentialItem","potentialItemId",
-            "nationId","groupId","teamId","displayNumber","tokenKey","appellation",
-            "position","tagList","itemUsage","itemDesc","itemObtainApproach",
-            "isNotObtainable","isSpChar","maxPotentialLevel","rarity","profession",
-            "subProfessionId","trait","phases","skills","talents","potentialRanks",
-            "favorKeyFrames","allSkillLvlup"
+            'name',
+            'description',
+            'canUseGeneralPotentialItem',
+            'potentialItemId',
+            'nationId',
+            'groupId',
+            'teamId',
+            'displayNumber',
+            'tokenKey',
+            'appellation',
+            'position',
+            'tagList',
+            'itemUsage',
+            'itemDesc',
+            'itemObtainApproach',
+            'isNotObtainable',
+            'isSpChar',
+            'maxPotentialLevel',
+            'rarity',
+            'profession',
+            'subProfessionId',
+            'trait',
+            'phases',
+            'skills',
+            'talents',
+            'potentialRanks',
+            'favorKeyFrames',
+            'allSkillLvlup'
         )
-        sql = f"""SELECT {','.join([f"`{key}`" for key in keys])} FROM `character_table`
-            WHERE name LIKE '%{self.name}%'""" # 从enemy_handbook_table查询
+        sql = f"""SELECT {','.join([f"`{_}`" for _ in keys])}
+            FROM `character_table` WHERE `name` LIKE '%{self.name}%'
+            """
         _db = Database()
         _db.execute(sql)
-        res = _db.fetchone()
-        if res is None: # 没有查到相关数据
+        res: tuple = _db.fetchone()
+        if res is None:
             return None
-        res = dict(zip(keys, map(json_str_to_obj, res)))
+        res: dict = dict(zip(keys, map(json_str_to_obj, res)))
         keys = (
-            "skillId","iconId","hidden","levels"
+            'skillId',
+            'iconId',
+            'hidden',
+            'levels'
         )
-        for i, _ in enumerate(res['skills']):
-            sql = f"""SELECT {','.join([f"`{key}`" for key in keys])} FROM `skill_table`
-                WHERE skillId=%s"""
-            args = obj_to_json_str(_['skillId'])
+        for i, _i in enumerate(res['skills']):
+            sql = f"""SELECT {','.join([f"`{_}`" for _ in keys])}
+                FROM `skill_table` WHERE `skillId`=%s
+                """
+            args = obj_to_json_str(_i['skillId'])
             _db.execute(sql, args)
             tmp = _db.fetchone()
             assert tmp is not None
             tmp = dict(zip(keys, map(json_str_to_obj, tmp)))
             res['skills'][i]['skillInfo'] = tmp
+        res['pic'] = f"file:///{os.getcwd()}/arksrc/avatar/{res['phases'][0]['characterPrefabKey']}.png"
         return res

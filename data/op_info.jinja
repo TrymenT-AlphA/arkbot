@@ -275,7 +275,7 @@
         {% if each['evolveCost'] %}
         <tr>
             <td class="key">精英{{ loop.index0-1 }}&nbsp;->&nbsp;精英{{ loop.index0 }}</td>
-            <td colspan="5">
+            <td colspan="4">
                 {% for m in each['evolveCost'] %}
                 <img src="{{ m['pic'] }}">X{{ m['count'] }}
                 {% endfor %}

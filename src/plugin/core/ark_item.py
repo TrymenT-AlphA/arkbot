@@ -18,7 +18,7 @@ class ArkItem:
         _db = Database()
         # 1. 更新 item_table.json
         logger.success("开始更新item_table")
-        item_table = "./arksrc./gamedata/excel/item_table.json"
+        item_table = "./arksrc/gamedata/excel/item_table.json"
         info = json_to_obj(item_table)['items']
         update_row = 0
         for _id, _ in tqdm(info.items()):

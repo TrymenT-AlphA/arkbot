@@ -4,8 +4,9 @@ from typing import Optional
 import os
 from tqdm import tqdm
 from nonebot.log import logger
-from .data_base import Database
-from ..utils import json_to_obj, obj_to_json_str, json_str_to_obj
+from .data_base import MySQL
+from ..utils import json_to_obj
+from ..utils import to_html
 
 
 class ArkEnemy:
@@ -19,44 +20,41 @@ class ArkEnemy:
         返回值:
             int: 更新的条数
         """
-        _db = Database()
+        _db = MySQL()
         update_row = 0
-        # 1. 更新 enemy_handbook_table.json
+
+        # 更新 enemy_handbook_table.json
         logger.success('开始更新enemy_handbook_table')
         info = json_to_obj('arksrc/gamedata/excel/enemy_handbook_table.json')
         for _key, _val in tqdm(info.items()):
-            sql = """SELECT `enemyId` FROM `enemy_handbook_table` WHERE `enemyId`=%s"""
-            args = obj_to_json_str(_key)
-            _db.execute(sql, args)
-            if _db.fetchone() is not None:
+            if _db.select_one(
+                    table='enemy_handbook_table',
+                    keys=('enemyId',),
+                    condition='`enemyId`=%s',
+                    args=(_key,)
+            ):
                 continue
             keys, vals = zip(*_val.items())
-            sql = f"""INSERT INTO `enemy_handbook_table`
-                ({','.join([f"`{_}`" for _ in keys])})
-                VALUES ({','.join(['%s'] * len(vals))})
-                """
-            args = tuple(map(obj_to_json_str, vals))
-            _db.execute(sql, args)
+            _db.insert('enemy_handbook_table', keys, vals)
             update_row += 1
         logger.success('enemy_handbook_table更新完毕!')
-        # 2. 更新 enemy_database.json
+
+        # 更新 enemy_database.json
         logger.success('开始更新enemy_database')
         info = json_to_obj('arksrc/gamedata/levels/enemydata/enemy_database.json')
         for _val in tqdm(info['enemies']):
-            sql = """SELECT `Key` FROM `enemy_database` WHERE `Key`=%s"""
-            args = obj_to_json_str(_val['Key'])
-            _db.execute(sql, args)
-            if _db.fetchone() is not None:
+            if _db.select_one(
+                    table='enemy_database',
+                    keys=('Key',),
+                    condition='`Key`=%s',
+                    args=(_val['Key'],)
+            ):
                 continue
             keys, vals = zip(*_val.items())
-            sql = f"""INSERT INTO `enemy_database`
-                ({','.join([f"`{_}`" for _ in keys])})
-                VALUES ({','.join(['%s'] * len(vals))})
-                """
-            args = tuple(map(obj_to_json_str, vals))
-            _db.execute(sql, args)
+            _db.insert('enemy_database', keys, vals)
             update_row += 1
         logger.success('enemy_database更新完毕!')
+
         return update_row
 
     def __init__(self, name=None):
@@ -80,21 +78,41 @@ class ArkEnemy:
             'defence',
             'resistance',
             'description',
-            'ability',
-            'Value'
+            'ability'
         )
-        _db = Database()
-        sql = f"""SELECT {','.join([f"`{key}`" for key in keys[:-1]])}
-            FROM `enemy_handbook_table` WHERE `name` LIKE '%{self.name}%'
-            """
-        _db.execute(sql)
-        res = _db.fetchone()
-        if res is None:
-            return None
-        sql = """SELECT `Value` FROM `enemy_database` WHERE `Key`=%s"""
-        args = obj_to_json_str(json_str_to_obj(res[0]))  # enemyId
-        _db.execute(sql, args)
-        res += _db.fetchone()
-        res = dict(zip(keys, map(json_str_to_obj, res)))
+        _db = MySQL()
+        res = _db.select_one(
+            table='enemy_handbook_table',
+            keys=keys,
+            condition=f"`name` LIKE '%{self.name}%'"
+        )
+        res['Value'] = _db.select_one(
+            table='enemy_database',
+            keys=('Value',),
+            condition="`Key`=%s",
+            args=(res['enemyId'],)
+        )['Value']
         res['pic'] = f"file:///{os.getcwd()}/arksrc/enemy/{res['enemyId']}.png"
+        # 数据二次处理
+        try:
+            res['description'] = to_html(res['description'])
+            res['ability'] = to_html(res['ability'])
+            _ = res['Value'][0]['enemyData']['description']
+            _['m_value'] = to_html(_['m_value'])
+        except KeyError:
+            ...
+        for i in range(1, len(res['Value'])):
+            level_0 = res['Value'][0]['enemyData']
+            level_i = res['Value'][i]['enemyData']
+            for _k, _v in level_i.items():
+                if _k != 'attributes':
+                    if level_0[_k] and not level_i[_k]:
+                        level_i[_k] = level_0[_k]
+                    elif isinstance(_v, dict):
+                        if level_0[_k]['m_defined'] and not level_i[_k]['m_defined']:
+                            level_i[_k] = level_0[_k]
+                else:
+                    for _kk, _vv in _v.items():
+                        if level_0[_k][_kk]['m_defined'] and not level_i[_k][_kk]['m_defined']:
+                            level_i[_k][_kk] = level_0[_k][_kk]
         return res

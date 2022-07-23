@@ -1,5 +1,5 @@
 * {
-    font-family: '霞鹜文楷';
+    font-family: '霞鹜文楷', serif;
 }
 
 p {
@@ -7,7 +7,7 @@ p {
     font-weight: bold;
 }
 
-table{
+table {
     width: 1000px;
     table-layout: fixed;
     text-align: center;
@@ -26,11 +26,11 @@ td:last-child {
     border-right: 0;
 }
 
-tr:last-child td{
+tr:last-child td {
     border-bottom: 0;
 }
 
-.key{
+.key {
     font-weight: bold;
     background-color: rgba(235, 235, 235, 0.5);
 }

@@ -3,7 +3,8 @@
 /accounts/
 __pycache__/
 /arksrc/
-/config.yml
 /.env
 /.env.dev
 /.env.prod
+/config.*
+/*.ipynb

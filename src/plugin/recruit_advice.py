@@ -1,11 +1,11 @@
 """公开招募
 """
 from nonebot import on_command
-from nonebot.adapters.onebot.v11 import Message
 from nonebot.matcher import Matcher
-from nonebot.params import CommandArg
 from nonebot.rule import to_me
+from nonebot.params import CommandArg
 from nonebot.typing import T_State
+from nonebot.adapters.onebot.v11 import Message
 from .core.ark_recruit import ArkRecruit
 
 RecruitAdvice = on_command(
@@ -17,10 +17,6 @@ RecruitAdvice = on_command(
 @RecruitAdvice.handle()
 async def _handler(matcher: Matcher, args: Message = CommandArg()) -> None:
     """如果首次带参就直接设置参数
-
-    参数:
-        matcher (Matcher): Matcher
-        args (Message, optional): Message. Defaults to CommandArg().
     """
     if len(args) > 0:
         matcher.set_arg('recruit_args', args)
@@ -29,9 +25,6 @@ async def _handler(matcher: Matcher, args: Message = CommandArg()) -> None:
 @RecruitAdvice.got('recruit_args', prompt='请博士发送公招截图')
 async def _gotter(state: T_State) -> None:
     """获取公招建议
-
-    参数:
-        state (T_State): T_State
     """
     recruit_args = state['recruit_args']
     if len(recruit_args) == 0:

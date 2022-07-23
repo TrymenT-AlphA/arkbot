@@ -183,17 +183,46 @@ def untag(string: str) -> str:
     return string
 
 
-def to_rich_text(string: str) -> str:
-    """转换为富文本
+def to_html(string: str) -> str:
+    """富文本转换为html
 
     参数:
-        string: 含tag字符串
+        string: 富文本
 
     返回值:
-        str: 富文本字符串
+        str: html
     """
+    def _find_style(_tag: str, _rich_text_dict: dict) -> str:
+        """找到tag对应的style
+
+        参数:
+            _tag: _tag
+            _rich_text_dict: _rich_text_dict
+
+        返回值:
+            str: 对应的style
+        """
+        for _key, _val in _rich_text_dict.items():
+            if _key in _tag:
+                return _val
+
     rich_text_dict = json_to_obj('data/rich_text_styles.json')
-    return untag(string)
+    tag_p = re.compile(r'<.*?>')
+    stk_tag = []
+    seq_tag = re.findall(tag_p, string)
+    seq_str = re.split(tag_p, string)
+    for i, cur_tag in enumerate(seq_tag):
+        if cur_tag != '</>':
+            stk_tag.append(i)
+        else:
+            _l = stk_tag.pop(i)
+            _r = i
+            seq_tag[_l], stk_tag[_r] = \
+                _find_style(seq_tag[_l], rich_text_dict).split('{0}')
+    res = seq_str[0]
+    for i, _ in enumerate(seq_tag):
+        res += seq_tag[i] + seq_str[i]
+    return res
 
 
 def bring_in_blackboard(args: dict) -> str:

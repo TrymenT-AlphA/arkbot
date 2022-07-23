@@ -4,7 +4,8 @@
 from functools import cmp_to_key
 from itertools import combinations
 from .baidu_ocr import BaiduOCR
-from ..utils import download_async, json_to_obj
+from ..utils import json_to_obj
+from ..utils import download_async
 
 
 class ArkRecruit:
@@ -53,8 +54,8 @@ class ArkRecruit:
         """识别文件
 
         参数:
-            file (str): 文件路径
-            accurate (bool, optional): 是否启用高精度. Defaults to False.
+            file: 文件路径
+            accurate: 是否启用高精度
 
         返回值:
             dict: 识别结果
@@ -69,8 +70,8 @@ class ArkRecruit:
         """识别url
 
         参数:
-            url (str): url
-            accurate (bool, optional): 是否启用高精度. Defaults to False.
+            url: url
+            accurate: 是否启用高精度
 
         返回值:
             dict: 识别结果
@@ -80,17 +81,18 @@ class ArkRecruit:
             return self.ocr.basic_accurate_ocr(image)
         return self.ocr.general_basic_ocr(image)
 
-    async def get_tags(self, src: str, src_t: str, accurate: bool = False) -> list:
+    async def _get_tags(self, src: str, src_t: str, accurate: bool = False) -> list:
         """识别公招图片,获取Tag
 
         参数:
-            src (str): 源文件
-            src_t (str): 源文件类型
-            accurate (bool, optional): 是否启用高精度. Defaults to False.
+            src: 源文件
+            src_t: 源文件类型
+            accurate: 是否启用高精度
 
         返回值:
             list: Tags的列表
         """
+        assert src_t in ['file', 'url']
         if src_t == 'file':
             words_result = self._ocr_file(src, accurate)
         elif src_t == 'url':
@@ -112,57 +114,92 @@ class ArkRecruit:
         """根据Tags自动生成公招建议
 
         参数:
-            src (str): _description_
-            src_t (str): _description_
-            accurate (bool, optional): _description_. Defaults to False.
+            src: 源文件
+            src_t: 源文件类型
+            accurate: 是否启用高精度
 
         返回值:
-            str: _description_
+            str: 公招建议
         """
-        tags = await self.get_tags(src, src_t, accurate)
-        if '高级资深干员' in tags:  # 有高资直接考虑高资
+        def _cmp_1(_x, _y):
+            """按数量升序
+
+            参数:
+                len(_x[1]): 符合的干员数量
+            """
+            return len(_x[1]) - len(_y[1])
+
+        def _cmp_2(_x, _y):
+            """按最高星级降序,其次数量升序
+
+            参数:
+                len(_x[1]): 符合的干员数量
+                _x[2]: 最高星级
+            """
+            if _x[2] != _y[2]:
+                return _y[2] - _x[2]
+            return len(_x[1]) - len(_y[1])
+
+        def _gene_strategy(min_tag: int, max_tag: int) -> tuple:
+            """生成所有策略
+
+            参数:
+                min_tag: 最少tag数
+                max_tag: 最多tag数
+
+            返回值:
+                tuple: 所有策略
+            """
+            _strategy = []
+            for tag_num in range(min_tag, max_tag + 1):
+                for _each in combinations(tags, tag_num):
+                    _strategy.append(_each)
+            _strategy.reverse()
+            return tuple(_strategy)
+
+        def _gene_advice(_result: tuple) -> str:
+            """生成公招建议
+
+            参数:
+                _result: 最终选择策略
+
+            返回值:
+                str: 公招建议
+            """
+            _advice = ''  # 生成公招建议
+            for _each in results:
+                _advice += ''.join([f"[{_tag}]" for _tag in _each[0]]) + ':\n'
+                _each[1].sort(key=lambda x: self.n_ops[x]['level'])
+                for _op_name in _each[1]:
+                    _level = self.n_ops[_op_name]['level']
+                    _advice += f"[{'★'*_level + '☆'*(6 - _level)}] {op_name}\n"
+            return _advice
+
+        tags = await self._get_tags(src, src_t, accurate)
+
+        if '高级资深干员' in tags:  # 有高资只考虑高资
             if '资深干员' in tags:  # 不再考虑资深
                 tags.remove('资深干员')
             tags.remove('高级资深干员')
-            pick_tags = []
-            for i in range(1, 3):  # 除高资外，额外选择1~2个tag
-                for each in combinations(tags, i):
-                    pick_tags.append(each)
-            pick_tags.reverse()
-            results = []  # 获取所有结果
-            for each in pick_tags:
-                hit_op = []  # tag命中的干员
+            # 除高资外，额外选择1~2个tag
+            strategy = _gene_strategy(1, 2)
+            # 获取所有结果
+            results = []
+            for each in strategy:
+                hit_op = []
                 for op_name, op_info in self.s_ops.items():
                     if set(each).issubset(set(op_info['tags'])):
                         hit_op.append(op_name)
                 if len(hit_op) > 0:
                     results.append((each, hit_op))
-
-            def cmp_1(_x, _y):
-                """按hit数量升序
-                """
-                return len(_x[1]) - len(_y[1])
-
-            results.sort(key=cmp_to_key(cmp_1))
-            advice = ''  # 生成公招建议
-            for result in results:
-                advice += '[高级资深干员]'
-                for tag in result[0]:
-                    advice += f"[{tag}]"
-                advice += ':\n'
-                for op_name in result[1]:
-                    advice += f"[{'★' * 6}] {op_name}\n"
-            return advice
+            # 对结果进行排序
+            results.sort(key=cmp_to_key(_cmp_1))
         else:  # 没有高资
-            pick_tags = []
-            for i in range(1, 4):  # 选择1~3个tag
-                for each in combinations(tags, i):
-                    if each == ('资深干员',):
-                        continue
-                    pick_tags.append(each)
-            pick_tags.reverse()
-            results = []  # 获取所有结果
-            for each in pick_tags:
+            # 选择1~3个tag
+            strategy = _gene_strategy(1, 3)
+            # 获取所有结果
+            results = []
+            for each in strategy:
                 hit_op = []  # tag命中的干员
                 min_level = 5  # 最低星级
                 for op_name, op_info in self.n_ops.items():
@@ -174,22 +211,7 @@ class ArkRecruit:
                         hit_op.append(op_name)
                 if len(hit_op) > 0:
                     results.append((each, hit_op, min_level))
+            # 对结果进行排序
+            results.sort(key=cmp_to_key(_cmp_2))
 
-            def cmp_2(_x, _y):
-                """优先高星,其次按hit数量升序
-                """
-                if _x[2] != _y[2]:
-                    return _y[2] - _x[2]
-                return cmp_1(_x, _y)
-
-            results.sort(key=cmp_to_key(cmp_2))
-            advice = ''  # 生成公招建议
-            for result in results:
-                for tag in result[0]:
-                    advice += f"[{tag}]"
-                advice += ':\n'
-                result[1].sort(key=lambda x: self.n_ops[x]['level'])
-                for op_name in result[1]:
-                    level = self.n_ops[op_name]['level']
-                    advice += f"[{'★' * level + '☆' * (6 - level)}] {op_name}\n"
-            return advice
+        return _gene_advice(tuple(results))

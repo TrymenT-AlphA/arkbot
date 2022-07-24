@@ -1,18 +1,21 @@
 """定时推送b站动态
 """
 from bilibili_api.user import User
-from nonebot import get_bot, require, on_command
-from nonebot.adapters.onebot.v11 import Message, Event
-from nonebot.matcher import Matcher
-from nonebot.adapters.onebot.exception import ActionFailed
+from nonebot import get_bot
+from nonebot import require
+from nonebot import on_command
 from nonebot.rule import to_me
+from nonebot.matcher import Matcher
 from nonebot.params import CommandArg
 from nonebot.permission import SUPERUSER
 from nonebot.typing import T_State
-from .core.data_base import Database
-from .utils import json_str_to_obj, obj_to_json_str
+from nonebot.adapters.onebot.v11 import Event
+from nonebot.adapters.onebot.v11 import Message
+from nonebot.adapters.onebot.exception import ActionFailed
+from .core.data_base import MySQL
+from .utils import json_str_to_obj
 
-# 设置定时任务
+
 BilibiliDynamic = require('nonebot_plugin_apscheduler').scheduler
 
 
@@ -21,10 +24,11 @@ async def _scheduler() -> None:
     """定时获取b站动态并自动推送
     """
     bot = get_bot()
-    _db = Database()
-    sql = """SELECT `uid`, `gids`, `did` FROM `bilibili_dynamic`"""
-    _db.execute(sql)
-    res = _db.fetchall()
+    _db = MySQL()
+    res = _db.select_all(
+        table='bilibili_dynamic',
+        keys=('uid', 'gid', 'did')
+    )
     for _ in res:
         uid, gids, did = tuple(map(json_str_to_obj, _))
         user = User(uid)
@@ -42,23 +46,28 @@ async def _scheduler() -> None:
             messages.append(
                 dyna['card']['title']
                 + f"\n[CQ:image,file={dyna['card']['pic']}]"
-                + f"\n➥{dyna['card']['short_link']}")
+                + f"\n➥{dyna['card']['short_link']}"
+            )
         try:  # 防止某些群发送失败而没有即使更新did的值
             for group_id in gids:  # 发送消息
                 for message in messages:
                     await bot.call_api(
                         'send_group_msg',
                         group_id=group_id,
-                        message=message)
-        except ActionFailed as _:
-            print(_)
+                        message=message
+                    )
+        except ActionFailed as e:
+            print(e)
         finally:
-            sql = """UPDATE `bilibili_dynamic` SET `did`=%s WHERE `uid`=%s"""
-            args = tuple(map(obj_to_json_str, (latest_did, uid)))
-            _db.execute(sql, args)
+            _db.update(
+                table='bilibili_dynamic',
+                keys=('did',),
+                vals=(latest_did,),
+                condition='`uid`=%s',
+                args=(uid,)
+            )
 
 
-# 添加动态订阅
 AddBiliDyna = on_command(
     cmd='AddBiliDyna',
     rule=to_me(),
@@ -69,10 +78,6 @@ AddBiliDyna = on_command(
 @AddBiliDyna.handle()
 async def _handler(matcher: Matcher, args: Message = CommandArg()) -> None:
     """对带参调用直接给变量赋值
-
-    参数:
-        matcher (Matcher): matcher
-        args (Message, optional): 参数纯文本. Defaults to CommandArg().
     """
     if len(args) > 0:
         matcher.set_arg('AddBiliDyna_args', args)
@@ -81,11 +86,6 @@ async def _handler(matcher: Matcher, args: Message = CommandArg()) -> None:
 @AddBiliDyna.got('AddBiliDyna_args', prompt='请输入b站up的uid')
 async def _gotter(matcher: Matcher, event: Event, state: T_State) -> None:
     """添加一个动态订阅
-
-    参数:
-        matcher (Matcher): Matcher
-        event (Event): Event
-        state (T_State): T_State
     """
     args = state['AddBiliDyna_args']
     if len(args) == 0:
@@ -98,26 +98,34 @@ async def _gotter(matcher: Matcher, event: Event, state: T_State) -> None:
         uid, gid = args
     else:
         return None
-    _db = Database()
-    sql = """SELECT `gids` FROM `bilibili_dynamic` WHERE `uid`=%s"""
-    args = obj_to_json_str(uid)
-    _db.execute(sql, args)
-    res = _db.fetchone()
-    if res is None:
-        sql = """INSERT INTO `bilibili_dynamic` SET `uid`=%s, `gids`=%s, `did`=%s"""
-        args = tuple(map(obj_to_json_str, (uid, [gid], 0)))
-    else:
-        gids = json_str_to_obj(res[0])
-        if gid in gids:
+
+    _db = MySQL()
+    res = _db.select_one(
+        table='bilibili_dynamic',
+        keys=('gids',),
+        condition='`uid`=%s',
+        args=(uid,)
+    )
+    if res:
+        if gid in res['gids']:
             await matcher.finish('动态订阅已存在')
-        gids += [gid]
-        sql = """UPDATE `bilibili_dynamic` SET `gids`=%s WHERE `uid`=%s"""
-        args = tuple(map(obj_to_json_str, (gids, uid)))
-    _db.execute(sql, args)
+        res['gids'] += [gid]
+        _db.update(
+            table='bilibili_dynamic',
+            keys=('gids',),
+            vals=(res['gids'],),
+            condition='`uid`=%s',
+            args=(uid,)
+        )
+    else:
+        _db.insert(
+            table='bilibili_dynamic',
+            keys=('uid', 'gids', 'did'),
+            vals=(uid, [gid], 0)
+        )
     await matcher.send('成功添加动态订阅')
 
 
-# 删除动态订阅
 DelBiliDyna = on_command(
     cmd='DelBiliDyna',
     rule=to_me(),
@@ -128,10 +136,6 @@ DelBiliDyna = on_command(
 @DelBiliDyna.handle()
 async def _handler(matcher: Matcher, args: Message = CommandArg()) -> None:
     """对带参调用直接给变量赋值
-
-    参数:
-        matcher (Matcher): matcher
-        args (Message, optional): 参数纯文本. Defaults to CommandArg().
     """
     if len(args) > 0:
         matcher.set_arg('DelBiliDyna_args', args)
@@ -140,11 +144,6 @@ async def _handler(matcher: Matcher, args: Message = CommandArg()) -> None:
 @DelBiliDyna.got('DelBiliDyna_args', prompt='请输入b站up的uid')
 async def _gotter(matcher: Matcher, event: Event, state: T_State) -> None:
     """删除一个动态订阅
-
-    参数:
-        matcher (Matcher): Matcher
-        event (Event): Event
-        state (T_State): T_State
     """
     args = state['DelBiliDyna_args']
     if len(args) == 0:
@@ -157,18 +156,23 @@ async def _gotter(matcher: Matcher, event: Event, state: T_State) -> None:
         uid, gid = args
     else:
         return None
-    _db = Database()
-    sql = """SELECT `gids` FROM `bilibili_dynamic` WHERE `uid`=%s"""
-    args = obj_to_json_str(uid)
-    _db.execute(sql, args)
-    res = _db.fetchone()
-    if res is None:  # 该uid不存在
+    _db = MySQL()
+    res = _db.select_one(
+        table='bilibili_dynamic',
+        keys=('gids',),
+        condition='`uid`=%s',
+        args=(uid,)
+    )
+    if not res:
         await matcher.finish('该订阅不存在')
-    gids = json_str_to_obj(res[0])
-    if gid not in gids:  # 该群没有订阅该用户
+    if gid not in res['gids']:
         await matcher.finish('该订阅不存在')
-    gids.remove(gid)
-    sql = """UPDATE `bilibili_dynamic` SET `gids`=%s WHERE `uid`=%s"""
-    args = tuple(map(obj_to_json_str, (gids, uid)))
-    _db.execute(sql, args)
+    res['gids'].remove(gid)
+    _db.update(
+        table='bilibili_dynamic',
+        keys=('gids',),
+        vals=(res['gids'],),
+        condition='`uid`=%s',
+        args=(uid,)
+    )
     await matcher.send('成功删除订阅')

@@ -221,3 +221,26 @@ class MySQL:
             """
         args = tuple(map(obj_to_json_str, vals))
         return self.execute(sql, args)
+
+    def delete(
+            self,
+            table: str,
+            condition: str,
+            args: Optional[tuple] = None
+    ) -> int:
+        """执行一条delete语句
+
+        参数:
+            table: 表名
+            condition: 条件
+            args: 条件的参数
+
+        返回值:
+            int: 更新的行数
+        """
+        sql = f"""
+            DELETE FROM `{table}`
+            WHERE {condition}
+            """
+        args = tuple(map(obj_to_json_str, args))
+        return self.execute(sql, args)

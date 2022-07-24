@@ -110,7 +110,7 @@ class ArkOp:
                 table='skill_table',
                 keys=keys,
                 condition=f"`skillId`=%s",
-                args=_i['skillId']
+                args=(_i['skillId'],)
             )
         # 数据预处理
         try:
@@ -170,5 +170,9 @@ class ArkOp:
                             ArkItem(item_id=_k['id']).get_info()['pic']
         except TypeError:
             ...
+        # 处理职业信息
+        profession_dict = json_to_obj('data/profession_dict.json')
+        res['professionName'] = profession_dict[f"{res['profession']}_{res['subProfessionId']}"]
+        res['professionIcon'] = f"file:///{os.getcwd()}/data/profession_icon/职业分支图标_{res['professionName']}.png"
         res['pic'] = f"file:///{os.getcwd()}/arksrc/avatar/{res['phases'][0]['characterPrefabKey']}.png"
         return res

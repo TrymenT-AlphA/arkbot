@@ -61,7 +61,7 @@ class ArkRange:
         coordinates = []
         min_row, min_col = 0, 0
         max_x, max_y = 0, 0
-        for each in res:
+        for each in res['grids']:
             min_row = min(min_row, each['row'])
             min_col = min(min_col, each['col'])
             if each['row'] == 0 and each['col'] == 0:

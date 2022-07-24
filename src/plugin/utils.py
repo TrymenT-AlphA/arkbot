@@ -235,7 +235,7 @@ def bring_in_blackboard(args: dict) -> str:
     返回值:
         str: 带入后的description
     """
-    res = untag(args['description'])
+    res = to_html(args['description'])
     _p = re.compile("{.*?}")
     for i in re.findall(_p, args['description']):
         for j in args['blackboard']:

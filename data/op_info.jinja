@@ -12,34 +12,39 @@
 <body>
     <table>
         <tr>
-            <td colspan="3" style="background-color: pink; color: white">
+            <td colspan="6" style="background-color: pink; color: white">
             {% with tmp = args['name'] + ' ' + (args['rarity']+1)*'★' %}{{ tmp }}{% endwith %}
             </td>
         </tr>
         <tr>
-            <td rowspan="6"><img src="{{ args['pic'] }}"></td>
-            <td class="key" colspan="2">分支</td>
+            <td rowspan="6" colspan="2"><img src="{{ args['pic'] }}"></td>
+            <td class="key" colspan="4">分支</td>
         </tr>
         <tr>
-            <td colspan="2" rowspan="2">
-            {% with tmp = args['profession'] + ' ' + args['subProfessionId'] %}{{ tmp }}{% endwith %}
+            <td colspan="1" rowspan="2">
+                <div style="display: inline-block; background: black;">
+                <img src="{{ args['professionIcon'] }}">
+                </div>
+            </td>
+            <td colspan="3" rowspan="2">
+            {{ args['professionName'] }}
             </td>
         </tr>
         <tr>
         </tr>
         <tr>
-            <td class="key" colspan="2">分支特性</td>
+            <td class="key" colspan="4">分支特性</td>
         </tr>
         <tr>
-            <td colspan="2" rowspan="2">{{ args['description'] }}</td>
+            <td colspan="4" rowspan="2">{{ args['description'] }}</td>
         </tr>
         <tr>
         </tr>
         <tr>
-            <td colspan="3" class="key">标签</td>
+            <td colspan="6" class="key">标签</td>
         </tr>
         <tr>
-            <td colspan="3">{{ args['tagList'] }}</td>
+            <td colspan="6">{{ args['tagList'] }}</td>
         </tr>
     </table>
     <p style="text-align: bottom;">属性</p>

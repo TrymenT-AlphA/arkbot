@@ -140,7 +140,7 @@ class ArkRecruit:
                 return _y[2] - _x[2]
             return len(_x[1]) - len(_y[1])
 
-        def _gene_strategy(min_tag: int, max_tag: int) -> tuple:
+        def _gene_strategy(min_tag: int, max_tag: int) -> list:
             """生成所有策略
 
             参数:
@@ -155,27 +155,11 @@ class ArkRecruit:
                 for _each in combinations(tags, tag_num):
                     _strategy.append(_each)
             _strategy.reverse()
-            return tuple(_strategy)
+            return _strategy
 
-        def _gene_advice(_result: tuple) -> str:
-            """生成公招建议
-
-            参数:
-                _result: 最终选择策略
-
-            返回值:
-                str: 公招建议
-            """
-            _advice = ''  # 生成公招建议
-            for _each in results:
-                _advice += ''.join([f"[{_tag}]" for _tag in _each[0]]) + ':\n'
-                _each[1].sort(key=lambda x: self.n_ops[x]['level'])
-                for _op_name in _each[1]:
-                    _level = self.n_ops[_op_name]['level']
-                    _advice += f"[{'★'*_level + '☆'*(6 - _level)}] {op_name}\n"
-            return _advice
-
+        results = []
         tags = await self._get_tags(src, src_t, accurate)
+        print(tags)
 
         if '高级资深干员' in tags:  # 有高资只考虑高资
             if '资深干员' in tags:  # 不再考虑资深
@@ -184,7 +168,6 @@ class ArkRecruit:
             # 除高资外，额外选择1~2个tag
             strategy = _gene_strategy(1, 2)
             # 获取所有结果
-            results = []
             for each in strategy:
                 hit_op = []
                 for op_name, op_info in self.s_ops.items():
@@ -194,24 +177,43 @@ class ArkRecruit:
                     results.append((each, hit_op))
             # 对结果进行排序
             results.sort(key=cmp_to_key(_cmp_1))
+            advice = ''  # 生成公招建议
+            for result in results:
+                advice += '[高级资深干员]'
+                for tag in result[0]:
+                    advice += f"[{tag}]"
+                advice += ':\n'
+                for op_name in result[1]:
+                    advice += f"[{'★' * 6}] {op_name}\n"
+            print(advice)
+            return advice
         else:  # 没有高资
             # 选择1~3个tag
             strategy = _gene_strategy(1, 3)
             # 获取所有结果
-            results = []
             for each in strategy:
                 hit_op = []  # tag命中的干员
                 min_level = 5  # 最低星级
                 for op_name, op_info in self.n_ops.items():
                     if set(each).issubset(set(op_info['tags'])):
-                        if op_info['level'] < 4:  # 最低小于4星忽略
+                        if op_info['level'] == 3:  # 最低小于4星忽略
                             hit_op = []
                             break
                         min_level = min(min_level, op_info['level'])
-                        hit_op.append(op_name)
+                        if op_info['level'] > 3:
+                            hit_op.append(op_name)
                 if len(hit_op) > 0:
                     results.append((each, hit_op, min_level))
             # 对结果进行排序
             results.sort(key=cmp_to_key(_cmp_2))
-
-        return _gene_advice(tuple(results))
+            advice = ''  # 生成公招建议
+            for result in results:
+                for tag in result[0]:
+                    advice += f"[{tag}]"
+                advice += ':\n'
+                result[1].sort(key=lambda x: self.n_ops[x]['level'])
+                for op_name in result[1]:
+                    level = self.n_ops[op_name]['level']
+                    advice += f"[{'★' * level + '☆' * (6 - level)}] {op_name}\n"
+            print(advice)
+            return advice

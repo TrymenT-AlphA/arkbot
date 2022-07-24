@@ -4,8 +4,8 @@ from typing import Optional
 import os
 from tqdm import tqdm
 from nonebot.log import logger
-from .data_base import Database
-from ..utils import json_to_obj, obj_to_json_str, json_str_to_obj
+from .data_base import MySQL
+from ..utils import json_to_obj
 
 
 class ArkItem:
@@ -16,25 +16,23 @@ class ArkItem:
     def update():
         """更新数据库
         """
-        _db = Database()
+        _db = MySQL()
         update_row = 0
-        # 1. 更新 item_table.json
+
+        # 更新 item_table.json
         logger.success('开始更新item_table')
         info = json_to_obj('./arksrc/gamedata/excel/item_table.json')['items']
         for _key, _val in tqdm(info.items()):
-            sql = """SELECT `itemId` FROM `item_table` WHERE `itemId`=%s"""
-            args = obj_to_json_str(_key)
-            _db.execute(sql, args)
-            if _db.fetchone() is not None:
+            if _db.select_one(
+                    table='item_table',
+                    keys=('itemId',),
+                    condition='`itemId`=%s',
+                    args=(_key,)
+            ):
                 continue
+            keys, vals = zip(*_val.items())
+            _db.insert('item_table', keys, vals)
             update_row += 1
-            keys, values = zip(*_val.items())
-            sql = f"""INSERT INTO `item_table`
-                ({','.join([f"`{_}`" for _ in keys])})
-                VALUES ({','.join(['%s'] * len(values))})
-                """
-            args = tuple(map(obj_to_json_str, values))
-            _db.execute(sql, args)
         logger.success('item_table更新完毕!')
         return update_row
 
@@ -45,7 +43,7 @@ class ArkItem:
     def get_info(self) -> Optional[dict]:
         """获取物品信息
         """
-        _db = Database()
+        _db = MySQL()
         keys = (
             'itemId',
             'name',
@@ -62,22 +60,27 @@ class ArkItem:
             'stageDropList',
             'buildingProductList'
         )
-        if self.name is None and self.item_id is None:
-            return None
-        if self.name is not None:
-            sql = f"""SELECT {','.join([f"`{_}`" for _ in keys[:-1]])} 
-                FROM `item_table` WHERE `name`=%s
-                """
-            args = obj_to_json_str(self.name)
+        if not self.name and not self.item_id:
+            return
+        if self.name:
+            res = _db.select_one(
+                table='item_table',
+                keys=keys,
+                condition='`name`=%s',
+                args=(self.name,)
+            )
+        elif self.item_id:
+            res = _db.select_one(
+                table='item_table',
+                keys=keys,
+                condition='`itemId`=%s',
+                args=(self.item_id,)
+            )
         else:
-            sql = f"""SELECT {','.join([f"`{_}`" for _ in keys[:-1]])} 
-                FROM `item_table` WHERE `itemId`=%s
-                """
-            args = obj_to_json_str(self.item_id)
-        _db.execute(sql, args)
-        res = _db.fetchone()
-        if res is None:
-            return None
-        res = dict(zip(keys, map(json_str_to_obj, res)))
+            res = None
         res['pic'] = f"file:///{os.getcwd()}/arksrc/item/{res['iconId']}.png"
+        # 计算stage code
+        stage_code_dict = json_to_obj('data/stage_code.json')
+        for _ in res['stageDropList']:
+            _['stageCode'] = stage_code_dict[_['stageId']]
         return res

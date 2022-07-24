@@ -50,63 +50,13 @@ async def _handler(matcher: Matcher, args: Message = CommandArg()) -> None:
     if args is None:
         await matcher.finish("数据库中没有干员信息")
     args['cssPath'] = f"file:///{os.getcwd()}/data/style.css"
-    try:
-        args['description'] = untag(args['description']).replace('\\n', '</br>')
-    except KeyError:
-        ...  # 忽略
-    # 处理tagList
-    if args['tagList'] is not None:
-        args['tagList'] = ','.join(args['tagList'])
-    # 处理职业信息，pass
-    # 处理攻击范围信息
-    for i, _ in enumerate(args['phases']):
-        args['phases'][i]['range'] = ArkRange(_['rangeId']).get_html()
-    # 处理天赋信息
-    try:
-        for i, _i in enumerate(args['talents']):
-            for j, _j in enumerate(_i['candidates']):
-                args['talents'][i]['candidates'][j]['description'] = \
-                    bring_in_blackboard(args['talents'][i]['candidates'][j]).replace('\\n', '</br>')
-    except TypeError:
-        ...
-    # 处理技能信息
-    for i, _i in enumerate(args['skills']):
-        if _i['skillInfo']['iconId'] is None:
-            args['skills'][i]['skillPic'] = \
-                f"file:///{os.getcwd()}/arksrc/skill/skill_icon_{_i['skillId']}.png"
-        else:
-            args['skills'][i]['skillPic'] = \
-                f"file:///{os.getcwd()}/arksrc/skill/skill_icon_{_i['skillInfo']['iconId']}.png"
-        for j, _j in enumerate(_i['skillInfo']['levels']):
-            args['skills'][i]['skillInfo']['levels'][j]['description'] = \
-                bring_in_blackboard(_i['skillInfo']['levels'][j]).replace('\\n', '</br>')
-            if _i['skillInfo']['levels'][j]['rangeId'] is not None:
-                args['skills'][i]['skillInfo']['levels'][j]['range'] = \
-                    ArkRange(_i['skillInfo']['levels'][j]['rangeId']).get_html()
-    # 处理精英化材料信息
-    for i, _i in enumerate(args['phases']):
-        if _i['evolveCost'] is not None:
-            for j, _j in enumerate(_i['evolveCost']):
-                args['phases'][i]['evolveCost'][j]['pic'] = \
-                    ArkItem(item_id=_j['id']).get_info()['pic']
-    # 处理技能升级表
-    try:
-        for i, _i in enumerate(args['allSkillLvlup']):
-            for j, _j in enumerate(_i['lvlUpCost']):
-                args['allSkillLvlup'][i]['lvlUpCost'][j]['pic'] = \
-                    ArkItem(item_id=_j['id']).get_info()['pic']
-    except TypeError:
-        ...
-    # 处理技能专精表
-    try:
-        for i, _i in enumerate(args['skills']):
-            for j, _j in enumerate(_i['levelUpCostCond']):
-                for k, _k in enumerate(_j['levelUpCost']):
-                    args['skills'][i]['levelUpCostCond'][j]['levelUpCost'][k]['pic'] = \
-                        ArkItem(item_id=_k['id']).get_info()['pic']
-    except TypeError:
-        ...
     # 根据jinja模板生成图片
-    render_jinja('op_info',args=args)
-    await matcher.send(MessageSegment.image(f"file:///{os.getcwd()}/data/op_info.jpg"))
+    render_jinja(
+        root='data',
+        template='op_info',
+        args=args
+    )
+    await matcher.send(
+        MessageSegment.image(f"file:///{os.getcwd()}/data/op_info.jpg")
+    )
     os.remove('data/op_info.jpg')

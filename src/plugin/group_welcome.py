@@ -12,7 +12,6 @@ from nonebot.adapters.onebot.v11 import Message
 from nonebot.adapters.onebot.v11 import MessageSegment
 from nonebot.adapters.onebot.v11 import GroupIncreaseNoticeEvent
 from .core.data_base import MySQL
-from .utils import json_str_to_obj
 
 # 注册群成员增加响应函数
 GroupWelcome = on_notice()
@@ -31,7 +30,7 @@ async def _handler(matcher: Matcher, event: GroupIncreaseNoticeEvent) -> None:
         args=(group_id,)
     )
     if res:  # 设置了入群欢迎词
-        await matcher.finish(MessageSegment.at(user_id) + json_str_to_obj(res[0]))
+        await matcher.finish(MessageSegment.at(user_id) + res['msg'])
 
 
 # 设置入群欢迎词

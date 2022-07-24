@@ -13,7 +13,6 @@ from nonebot.adapters.onebot.v11 import Event
 from nonebot.adapters.onebot.v11 import Message
 from nonebot.adapters.onebot.exception import ActionFailed
 from .core.data_base import MySQL
-from .utils import json_str_to_obj
 
 
 BilibiliDynamic = require('nonebot_plugin_apscheduler').scheduler
@@ -27,10 +26,10 @@ async def _scheduler() -> None:
     _db = MySQL()
     res = _db.select_all(
         table='bilibili_dynamic',
-        keys=('uid', 'gid', 'did')
+        keys=('uid', 'gids', 'did')
     )
     for _ in res:
-        uid, gids, did = tuple(map(json_str_to_obj, _))
+        uid, gids, did = _.values()
         user = User(uid)
         dyna = (await user.get_dynamics())['cards'][0]
         latest_did = dyna['desc']['dynamic_id']

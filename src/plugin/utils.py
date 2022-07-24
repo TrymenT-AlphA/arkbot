@@ -192,7 +192,7 @@ def to_html(string: str) -> str:
     返回值:
         str: html
     """
-    def _find_style(_tag: str, _rich_text_dict: dict) -> str:
+    def _find_style(_tag: str, _rich_text_dict: dict) -> list:
         """找到tag对应的style
 
         参数:
@@ -204,7 +204,7 @@ def to_html(string: str) -> str:
         """
         for _key, _val in _rich_text_dict.items():
             if _key in _tag:
-                return _val
+                return _val.split('{0}')
 
     rich_text_dict = json_to_obj('data/rich_text_styles.json')
     tag_p = re.compile(r'<.*?>')
@@ -215,13 +215,14 @@ def to_html(string: str) -> str:
         if cur_tag != '</>':
             stk_tag.append(i)
         else:
-            _l = stk_tag.pop(i)
-            _r = i
-            seq_tag[_l], stk_tag[_r] = \
-                _find_style(seq_tag[_l], rich_text_dict).split('{0}')
+            _l, _r = stk_tag.pop(), i
+            if seq_tag[_l][1] == '$':
+                seq_tag[_l], seq_tag[_r] = '', ''
+            else:
+                seq_tag[_l], seq_tag[_r] = _find_style(seq_tag[_l], rich_text_dict)
     res = seq_str[0]
     for i, _ in enumerate(seq_tag):
-        res += seq_tag[i] + seq_str[i]
+        res += seq_tag[i] + seq_str[i + 1]
     return res
 
 

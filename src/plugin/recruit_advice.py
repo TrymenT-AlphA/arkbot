@@ -29,11 +29,9 @@ async def _gotter(state: T_State) -> None:
     recruit_args = state['recruit_args']
     if len(recruit_args) == 0:
         await RecruitAdvice.reject('请博士发送公招截图')
-    pic_cnt = 0
     advice = []
     for arg in recruit_args:
         if arg.type == 'image':
-            pic_cnt += 1
             advice.append(await ArkRecruit().get_advice(arg.data['url'], 'url'))
     if len(advice) == 1:
         if len(advice[0]) > 0:

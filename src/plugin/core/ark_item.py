@@ -11,6 +11,13 @@ from ..utils import json_to_obj
 class ArkItem:
     """明日方舟物品
     """
+    occ_per_dict = {
+        'ALWAYS': '固定掉落',
+        'ALMOST': '大概率',
+        'USUAL': '概率掉落',
+        'OFTEN': '小概率',
+        'SOMETIMES': '罕见'
+    }
 
     @staticmethod
     def update():
@@ -83,4 +90,7 @@ class ArkItem:
         stage_code_dict = json_to_obj('data/stage_code.json')
         for _ in res['stageDropList']:
             _['stageCode'] = stage_code_dict[_['stageId']]
+        # 计算occ_per
+        for _ in res['stageDropList']:
+            _['occPer'] = self.occ_per_dict[_['occPer']]
         return res

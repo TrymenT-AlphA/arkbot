@@ -159,7 +159,7 @@ class ArkRecruit:
 
         results = []
         tags = await self._get_tags(src, src_t, accurate)
-        print(tags)
+        print(f"识别到的标签：{tags}")
 
         if '高级资深干员' in tags:  # 有高资只考虑高资
             if '资深干员' in tags:  # 不再考虑资深
@@ -185,7 +185,6 @@ class ArkRecruit:
                 advice += ':\n'
                 for op_name in result[1]:
                     advice += f"[{'★' * 6}] {op_name}\n"
-            print(advice)
             return advice
         else:  # 没有高资
             # 选择1~3个tag
@@ -215,5 +214,4 @@ class ArkRecruit:
                 for op_name in result[1]:
                     level = self.n_ops[op_name]['level']
                     advice += f"[{'★' * level + '☆' * (6 - level)}] {op_name}\n"
-            print(advice)
             return advice
